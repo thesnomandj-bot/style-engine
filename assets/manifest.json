@@ -1,0 +1,13 @@
+{
+  "module": "hand-drawn",
+  "assets": [
+    {
+      "filename": "curved-arrow-pointing-right.png",
+      "type": "png",
+      "description": "curved arrow pointing right",
+      "date": "2026-07-10",
+      "source": "test_arrow.jpg"
+    }
+  ],
+  "updated": "2026-07-10"
+}
