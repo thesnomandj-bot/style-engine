@@ -1,0 +1,171 @@
+/* ============================================================================
+   STYLE ENGINE · MODULE 1 · HAND-DRAWN
+   ----------------------------------------------------------------------------
+   THE DIAL CONTRACT (non-negotiable, shared by every module):
+     Every visual-effect STRENGTH is a CSS custom property scaled 0-100.
+     Namespace for this module: --hd-*  (h and d = "hand-drawn").
+     There are NO hard-coded effect magnitudes below the dial line. Every
+     magnitude is derived from a dial via calc() (for CSS-drivable props) or
+     by the JS binder (hand-drawn.js, for SVG filter attributes that CSS
+     cannot reach). A macro sets a dial; everything it touches recomputes.
+
+   HOW A FUTURE MODULE BOLTS ON:
+     Copy this file's shape. Pick a 2-letter namespace (glitch -> --gl-*,
+     text-motion -> --tm-*, media-decay -> --md-*). Expose each effect's
+     strength as a 0-100 dial in :root, derive real units in the DERIVED
+     block, and register the module's SVG-attribute needs with the binder.
+
+   HOW THE MACRO LAYER (later) DRIVES THIS:
+     A macro is a single 0-100 dial mapped onto many module dials, exactly
+     like an Ableton effect-rack macro. It calls StyleEngine.setDial(name,v)
+     (see hand-drawn.js) for each mapped variable. Because every effect reads
+     from a dial, one macro move can move wobble + grain + rotation + boil at
+     once. Hard-coded values would break this; that is why there are none.
+   ========================================================================== */
+
+:root {
+  /* ======================= THE DIALS · 0-100 only ======================= */
+  /* These seven knobs are the entire public surface of this module.       */
+  --hd-wobble:      55;   /* container edge wobble (crisp rect -> very wobbly) */
+  --hd-grain:       12;   /* paper grain overlay strength (used ~5-15)         */
+  --hd-rotation:    45;   /* scatter rotation magnitude for nth-child elements */
+  --hd-boil-speed:  50;   /* boil animation speed (0 = frozen, 100 = fast)     */
+  --hd-sketchiness: 50;   /* roughen displacement + rough.js roughness         */
+  --hd-line-weight: 50;   /* stroke-weight variation                           */
+  --hd-overshoot:   45;   /* corner gap / overshoot amount                     */
+
+  /* ======================= LIMITED PALETTE ============================== */
+  /* Hand-drawn rule: limited palette + visible texture. Off-white paper.  */
+  --hd-paper:   #faf6ef;  /* cream page base (#faf6ef range, mandated)      */
+  --hd-ink:     #1a1a17;  /* near-black ink                                 */
+  --hd-accent:  #c8452f;  /* riso red                                       */
+  --hd-accent2: #2f5ec8;  /* riso blue                                      */
+  --hd-accent3: #e8b23a;  /* riso yellow                                    */
+
+  /* ================= DERIVED · do NOT edit, edit the dial ================ */
+  /* calc() maps each 0-100 dial onto the real unit its property needs.     */
+  --_hd-k-wobble:   calc(var(--hd-wobble) / 100);            /* 0-1 mult     */
+  --_hd-grain-op:   calc(var(--hd-grain) / 100);             /* 0-1 opacity  */
+  --_hd-rot:        calc(var(--hd-rotation) * 0.05deg);      /* 0-5deg       */
+  --_hd-offset:     calc(var(--hd-rotation) * 0.06px);       /* 0-2.7px      */
+  --_hd-stroke:     calc(1.1px + var(--hd-line-weight) * 0.03px); /* 1.1-4.1px */
+  --_hd-overshoot:  calc(var(--hd-overshoot) * 0.12px);      /* 0-12px       */
+  --_hd-misreg:     calc(1px + var(--hd-sketchiness) * 0.02px);   /* 1-3px riso misregistration */
+  --_hd-boil-dur:   calc((110 - var(--hd-boil-speed)) * 0.012s);  /* ~1.32s -> 0.12s (CSS boil fallback) */
+  --_hd-draw-dur:   calc((130 - var(--hd-boil-speed)) * 0.03s);   /* self-drawing line duration */
+}
+
+/* ============================= PAGE BASE ================================= */
+.hd-page {
+  background-color: var(--hd-paper);
+  color: var(--hd-ink);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Body text is ALWAYS a clean sans. Never handwriting for body copy. */
+.hd-body { font-family: Inter, system-ui, sans-serif; line-height: 1.6; }
+
+/* Handwriting fonts are for headings / annotations ONLY. */
+.hd-hand { font-family: "Caveat", "Shantell Sans", "Comic Sans MS", cursive; }
+
+/* ==================== 1 · WOBBLY CONTAINER ============================== */
+/* Classic wobble at dial=100 is:
+     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+   We interpolate each corner from crisp (6px) toward its wobble target by
+   --_hd-k-wobble, so the SAME element crisps up at dial=0 and reaches the
+   classic values at dial=100. Per-element seed vars (--hdr1..--hdr8) keep
+   "no two identical". Defaults below are the canonical wobble.            */
+.hd-box {
+  --hdr1: 249; --hdr2: 9;   --hdr3: 219; --hdr4: 9;
+  --hdr5: 9;   --hdr6: 219; --hdr7: 9;   --hdr8: 249;
+  border: var(--_hd-stroke) solid var(--hd-ink);
+  border-radius:
+    calc((6 + var(--hdr1) * var(--_hd-k-wobble)) * 1px)
+    calc((6 + var(--hdr2) * var(--_hd-k-wobble)) * 1px)
+    calc((6 + var(--hdr3) * var(--_hd-k-wobble)) * 1px)
+    calc((6 + var(--hdr4) * var(--_hd-k-wobble)) * 1px) /
+    calc((6 + var(--hdr5) * var(--_hd-k-wobble)) * 1px)
+    calc((6 + var(--hdr6) * var(--_hd-k-wobble)) * 1px)
+    calc((6 + var(--hdr7) * var(--_hd-k-wobble)) * 1px)
+    calc((6 + var(--hdr8) * var(--_hd-k-wobble)) * 1px);
+  padding: 1.25rem 1.5rem;
+  background: transparent;
+}
+/* No two identical: vary the seed set per element with nth-of-type. */
+.hd-box:nth-of-type(2n) { --hdr1: 15; --hdr2: 225; --hdr3: 20; --hdr4: 240; --hdr5: 235; --hdr6: 12; --hdr7: 250; --hdr8: 18; }
+.hd-box:nth-of-type(3n) { --hdr1: 180; --hdr2: 30; --hdr3: 255; --hdr4: 22; --hdr5: 40; --hdr6: 200; --hdr7: 26; --hdr8: 210; }
+.hd-box:nth-of-type(5n) { --hdr1: 60;  --hdr2: 200; --hdr3: 90; --hdr4: 175; --hdr5: 210; --hdr6: 55; --hdr7: 190; --hdr8: 70; }
+
+/* ==================== 2 · SCATTER (nth-child primes) =================== */
+/* Prime steppers 3n/5n/7n so rotations don't fall on a repeating grid.
+   Magnitude and offset both scale with --hd-rotation (range 0-5deg).     */
+.hd-scatter > * { transition: transform .12s ease; }
+.hd-scatter > *:nth-child(3n) { transform: rotate(var(--_hd-rot)); }
+.hd-scatter > *:nth-child(5n) { transform: rotate(calc(var(--_hd-rot) * -1)) translate(0, var(--_hd-offset)); }
+.hd-scatter > *:nth-child(7n) { transform: rotate(calc(var(--_hd-rot) * 0.6)) translate(var(--_hd-offset), calc(var(--_hd-offset) * -1)); }
+.hd-scatter > *:nth-child(2n) { transform: rotate(calc(var(--_hd-rot) * -0.4)); }
+
+/* ==================== 3 · ROUGHEN (SVG displacement) ================== */
+/* The filter itself lives in the inline <svg> defs (see hand-drawn.svg.html).
+   Its displacement SCALE is an SVG attribute CSS cannot set, so the JS
+   binder writes it from --hd-sketchiness. This class just applies it.    */
+.hd-roughen { filter: url(#hd-roughen); }
+.hd-boil    { filter: url(#hd-boil); }
+
+/* ==================== 4 · GRAIN OVERLAY =============================== */
+/* fractalNoise grain as a fixed full-page inline-SVG overlay. Opacity IS a
+   CSS prop, so it reads the dial directly (no binder needed). The grain
+   texture itself is the #hd-grain SVG filter painted onto a full-bleed rect.
+   0.05-0.15 opacity is the sweet spot; the dial spans it via --hd-grain.  */
+.hd-grain-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: var(--_hd-grain-op);
+  mix-blend-mode: multiply;
+}
+
+/* ==================== 5 · SELF-DRAWING LINE ========================== */
+/* stroke-dasharray/offset animation. JS sets --hd-path-len from
+   getTotalLength(); duration comes from the boil-speed dial.            */
+.hd-draw-path {
+  stroke-dasharray: var(--hd-path-len, 1000);
+  stroke-dashoffset: var(--hd-path-len, 1000);
+  fill: none;
+  stroke: var(--hd-ink);
+  stroke-width: var(--_hd-stroke);
+  stroke-linecap: round;
+}
+.hd-draw-path.hd-draw-run {
+  animation: hd-draw var(--_hd-draw-dur) ease forwards;
+}
+@keyframes hd-draw { to { stroke-dashoffset: 0; } }
+
+/* ==================== 6 · RISOGRAPH POSTER =========================== */
+/* Flat ink layers, multiply overlaps, misregistration offset from dial.  */
+.hd-riso { position: relative; isolation: isolate; }
+.hd-riso__layer {
+  mix-blend-mode: multiply;
+  position: absolute; inset: 0;
+}
+.hd-riso__layer--red    { color: var(--hd-accent);  transform: translate(calc(var(--_hd-misreg) * -1), 0); }
+.hd-riso__layer--blue   { color: var(--hd-accent2); transform: translate(var(--_hd-misreg), var(--_hd-misreg)); }
+.hd-riso__layer--yellow { color: var(--hd-accent3); transform: translate(0, calc(var(--_hd-misreg) * -1)); }
+
+/* halftone via a repeating radial dot grid, size nudged by sketchiness */
+.hd-halftone {
+  background-image: radial-gradient(var(--hd-ink) 22%, transparent 23%);
+  background-size: calc(6px + var(--hd-sketchiness) * 0.04px) calc(6px + var(--hd-sketchiness) * 0.04px);
+}
+
+/* ==================== ACCESSIBILITY ================================= */
+/* All motion is opt-IN: it only runs when the user has NOT asked to reduce
+   motion. The binder (hand-drawn.js) additionally freezes the SVG boil,
+   because SVG <animate> ignores this media query.                      */
+@media (prefers-reduced-motion: reduce) {
+  .hd-draw-path.hd-draw-run { animation: none; stroke-dashoffset: 0; }
+  .hd-scatter > * { transition: none; }
+}

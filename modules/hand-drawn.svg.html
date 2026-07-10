@@ -1,0 +1,40 @@
+<!-- ==========================================================================
+     STYLE ENGINE · MODULE 1 · HAND-DRAWN · SVG FILTER DEFS
+     Paste this block ONCE near the top of <body>. It defines the three SVG
+     filters the CSS classes reference. Inline (not external url(file.svg#id))
+     because external SVG filter refs are unreliable over file:// and across
+     engines. The JS binder (hand-drawn.js) writes the attributes tagged with
+     data-hd-* from the dials.
+     ========================================================================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- 3 · ROUGHEN: turbulence displaces edges. numOctaves 2-3, baseFreq ~0.02.
+         feDisplacementMap[scale] is written by the binder from --hd-sketchiness. -->
+    <filter id="hd-roughen" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="3" seed="7" result="hd-noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="hd-noise" data-hd-roughen scale="3.5"
+                         xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
+    <!-- 4 · BOIL: same displacement, but baseFrequency STEPS across discrete
+         values (calcMode="discrete" is mandatory - smooth easing kills the
+         illusion). The binder writes dur from --hd-boil-speed and freezes this
+         entirely under prefers-reduced-motion. -->
+    <filter id="hd-boil" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="2" seed="4" result="hd-boil-noise">
+        <animate data-hd-boil attributeName="baseFrequency"
+                 values="0.02;0.028;0.018;0.024" dur="0.9s"
+                 calcMode="discrete" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="hd-boil-noise" data-hd-roughen scale="4"
+                         xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
+    <!-- 5 · GRAIN: fractalNoise desaturated to gray, painted on the overlay
+         rect. baseFrequency 0.6-0.9 gives fine film grain. -->
+    <filter id="hd-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" seed="11" stitchTiles="stitch" result="hd-g"/>
+      <feColorMatrix in="hd-g" type="saturate" values="0"/>
+    </filter>
+  </defs>
+</svg>
