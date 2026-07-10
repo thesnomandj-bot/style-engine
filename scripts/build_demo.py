@@ -51,7 +51,8 @@ canvas { max-width: 100%; height: auto; background: transparent; }
 /* control panel */
 .panel { position: fixed; top: 0; right: 0; width: 300px; height: 100vh; overflow-y: auto;
          background: rgba(255,255,255,.92); border-left: 2px solid var(--hd-ink);
-         padding: 1.1rem 1.1rem 3rem; z-index: 10000; backdrop-filter: blur(2px); }
+         padding: 1.1rem 1.1rem 3rem; z-index: 10000;
+         -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
 .panel h3 { margin: .2rem 0 .1rem; font-size: 1.05rem; }
 .panel .sub { font-size: .78rem; opacity: .65; margin: 0 0 1rem; }
 .dial { margin: .55rem 0 .95rem; }
@@ -72,7 +73,7 @@ canvas { max-width: 100%; height: auto; background: transparent; }
 # The seven dials + the macro. label, var, min, max, step, default.
 DIALS = [
     ("Wobble", "--hd-wobble", 0, 100, 55),
-    ("Grain", "--hd-grain", 0, 100, 12),
+    ("Grain", "--hd-grain", 0, 100, 60),
     ("Rotation (scatter)", "--hd-rotation", 0, 100, 45),
     ("Boil speed", "--hd-boil-speed", 0, 100, 50),
     ("Sketchiness", "--hd-sketchiness", 0, 100, 50),
@@ -82,10 +83,11 @@ DIALS = [
 
 
 def dial_html(label, var, lo, hi, val):
+    sid = "s" + var.replace("--", "").replace("-", "_")   # e.g. shd_wobble
     return (
-        f'<div class="dial"><label>{label}<output id="out{var}">{val}</output></label>'
-        f'<input type="range" min="{lo}" max="{hi}" value="{val}" '
-        f'oninput="setDial(\'{var}\', this.value)"></div>'
+        f'<div class="dial"><label for="{sid}">{label}<output id="out{var}" for="{sid}">{val}</output></label>'
+        f'<input id="{sid}" type="range" min="{lo}" max="{hi}" value="{val}" '
+        f'aria-label="{label}" oninput="setDial(\'{var}\', this.value)"></div>'
     )
 
 
@@ -97,8 +99,8 @@ PANEL = f"""
   <p class="sub">Every slider writes a <code>--hd-*</code> CSS variable 0–100. This panel is the seed of the future macro UI.</p>
 
   <div class="macro">
-    <div class="dial"><label>MACRO · Hand-Made-ness<output id="outmacro">50</output></label>
-    <input type="range" min="0" max="100" value="50" oninput="setMacro(this.value)"></div>
+    <div class="dial"><label for="smacro">MACRO · Hand-Made-ness<output id="outmacro" for="smacro">50</output></label>
+    <input id="smacro" type="range" min="0" max="100" value="50" aria-label="Macro: Hand-Made-ness" oninput="setMacro(this.value)"></div>
     <p class="sub" style="margin:0">One dial → many params (wobble, rotation, sketchiness, boil, grain), exactly like an Ableton rack macro.</p>
   </div>
 

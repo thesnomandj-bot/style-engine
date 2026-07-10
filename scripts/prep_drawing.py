@@ -35,7 +35,15 @@ except ImportError:
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "assets"
-MANIFEST = DEFAULT_OUT / "manifest.json"
+
+
+def rel(p: Path) -> str:
+    """Display a path relative to the repo when possible, else absolute.
+    (Path.relative_to raises for paths outside ROOT, e.g. a custom --out-dir.)"""
+    try:
+        return str(p.relative_to(ROOT))
+    except ValueError:
+        return str(p)
 
 
 def slugify(text: str) -> str:
@@ -50,10 +58,21 @@ def hex_to_rgb(h: str):
     return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
 
 
+def flatten_alpha_over_white(img: Image.Image) -> Image.Image:
+    """If the input already has transparency, composite it over white first, so an
+    existing alpha channel is honored instead of silently read as solid ink."""
+    if img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info):
+        rgba = img.convert("RGBA")
+        bg = Image.new("RGBA", rgba.size, (255, 255, 255, 255))
+        bg.alpha_composite(rgba)
+        return bg.convert("RGB")
+    return img
+
+
 def build_ink_alpha(img: Image.Image, invert: bool, flatten: bool, gamma: float) -> Image.Image:
     """Return a single-channel 'L' image that is the ink ALPHA:
        255 where ink is solid, 0 where paper is (transparent)."""
-    gray = ImageOps.grayscale(img)
+    gray = ImageOps.grayscale(flatten_alpha_over_white(img))
     if invert:                      # white ink on dark paper
         gray = ImageOps.invert(gray)
 
@@ -98,8 +117,10 @@ def try_potrace(alpha: Image.Image, threshold: int, out_svg: Path) -> bool:
         print("  · potrace not found — SVG tracing skipped.")
         print("    (optional) enable it with:  brew install potrace   # then re-run")
         return False
-    # potrace reads a bitmap; write a 1-bit PBM from the alpha mask.
-    bw = alpha.point(lambda v: 255 if v > threshold else 0).convert("1")
+    # potrace reads a bitmap and treats BLACK pixels as the foreground to trace.
+    # Our alpha is 255 where the INK is, so the ink must become BLACK (mode-'1' 0)
+    # and the paper WHITE (255). Getting this polarity wrong traces the paper.
+    bw = alpha.point(lambda v: 0 if v > threshold else 255).convert("1")
     with tempfile.NamedTemporaryFile(suffix=".pbm", delete=False) as tf:
         tmp = Path(tf.name)
     try:
@@ -113,7 +134,7 @@ def try_potrace(alpha: Image.Image, threshold: int, out_svg: Path) -> bool:
         if "currentColor" not in svg:  # ensure at least the group inherits currentColor
             svg = svg.replace("<g ", '<g fill="currentColor" ', 1)
         out_svg.write_text(svg, encoding="utf-8")
-        print(f"  · traced SVG  -> {out_svg.relative_to(ROOT)}  (fill=currentColor)")
+        print(f"  · traced SVG  -> {rel(out_svg)}  (fill=currentColor)")
         return True
     except subprocess.CalledProcessError as e:
         print(f"  · potrace failed: {e.stderr.decode(errors='ignore').strip()}")
@@ -122,26 +143,28 @@ def try_potrace(alpha: Image.Image, threshold: int, out_svg: Path) -> bool:
         tmp.unlink(missing_ok=True)
 
 
-def load_manifest() -> dict:
-    if MANIFEST.exists():
+def load_manifest(manifest_path: Path) -> dict:
+    if manifest_path.exists():
         try:
-            data = json.loads(MANIFEST.read_text(encoding="utf-8"))
+            data = json.loads(manifest_path.read_text(encoding="utf-8"))
             if isinstance(data, list):          # tolerate a bare array
                 data = {"assets": data}
-            data.setdefault("assets", [])
+            # coerce a syntactically-valid-but-wrong-typed "assets" back to a list
+            if not isinstance(data.get("assets"), list):
+                data["assets"] = []
             return data
         except json.JSONDecodeError:
             print("  · manifest.json was unreadable — starting a fresh one.")
     return {"module": "hand-drawn", "assets": []}
 
 
-def append_manifest(entries: list):
-    data = load_manifest()
+def append_manifest(manifest_path: Path, entries: list):
+    data = load_manifest(manifest_path)
     data["assets"].extend(entries)
     data["updated"] = date.today().isoformat()
-    MANIFEST.parent.mkdir(parents=True, exist_ok=True)
-    MANIFEST.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-    print(f"  · manifest    -> {MANIFEST.relative_to(ROOT)}  ({len(data['assets'])} assets total)")
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    print(f"  · manifest    -> {rel(manifest_path)}  ({len(data['assets'])} assets total)")
 
 
 def main(argv=None):
@@ -181,7 +204,7 @@ def main(argv=None):
     # honest stat: how much of the image became transparent
     hist = alpha.histogram()
     transparent = hist[0] / float(alpha.size[0] * alpha.size[1]) * 100
-    print(f"  · PNG         -> {png_path.relative_to(ROOT)}  ({transparent:.0f}% paper made transparent)")
+    print(f"  · PNG         -> {rel(png_path)}  ({transparent:.0f}% paper made transparent)")
 
     today = date.today().isoformat()
     entries = [{
@@ -193,7 +216,8 @@ def main(argv=None):
             "filename": svg_path.name, "type": "svg",
             "description": args.description or base, "date": today, "source": src.name,
         })
-    append_manifest(entries)
+    # manifest lives WITH the outputs (follows --out-dir) so entries resolve beside it
+    append_manifest(out_dir / "manifest.json", entries)
     print("done.")
 
 

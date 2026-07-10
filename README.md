@@ -56,9 +56,9 @@ magnitude, a macro couldn't move it — and the macro is the product.
 ### The macro (already demonstrated)
 
 A macro is **one 0–100 knob mapped onto many dials**, exactly like an effect-rack macro. The demo
-ships a working one: the **"Hand-Made-ness"** slider. Drag it and you'll see Wobble, Rotation,
-Sketchiness, Boil and Grain all move together (each on its own curve). That is the seed of the
-future dedicated macro layer — it already works because every effect obeys a dial.
+ships a working one: the **"Hand-Made-ness"** slider. Drag it and all **seven** dials move together
+(each on its own curve). That is the seed of the future dedicated macro layer — it already works
+because every effect obeys a dial.
 
 ```js
 // a macro is just: one input -> many setDial() calls, each with its own curve
@@ -68,6 +68,8 @@ function setMacro(m) {
   StyleEngine.setDial('--hd-sketchiness', m);
   StyleEngine.setDial('--hd-boil-speed',  m * 0.8);
   StyleEngine.setDial('--hd-grain',       m * 0.28);
+  StyleEngine.setDial('--hd-line-weight', m);
+  StyleEngine.setDial('--hd-overshoot',   m);
 }
 ```
 
@@ -138,7 +140,7 @@ Every run appends a record to `assets/manifest.json`. Requirements: **Pillow** (
 potrace is optional — `brew install potrace` to enable SVG tracing; without it the PNG is still produced.
 
 Useful flags: `--invert` (white ink on dark paper), `--no-flatten` (for solid-fill art, not line
-art), `--gamma 1.5` (punchier ink), `--ink "#c8452f"` (recolor the PNG), `--name arrow`.
+art), `--gamma 1.5` (punchier ink), `--ink "#b83c28"` (recolor the PNG), `--name arrow`.
 
 ---
 
@@ -172,11 +174,13 @@ reason for the dial contract.
 
 ## Accessibility
 
-All motion is **opt-in**: boil, self-drawing lines, and scatter transitions only run when the user
-has **not** requested reduced motion. The CSS handles this with a `prefers-reduced-motion: reduce`
-media query, and the binder additionally freezes the SVG boil (SVG `<animate>` ignores that media
-query, so JS has to stop it). Body text is always a clean sans (Inter); handwriting fonts are used
-for headings and annotations only, never body copy.
+All motion is **opt-in**. Self-drawing lines and scatter transitions are gated by a
+`prefers-reduced-motion: reduce` media query. The SVG boil starts **frozen** (`begin="indefinite"`)
+and only animates once the JS binder starts it — which it does *only* when reduced motion is off — so
+with reduced motion on, **or** with JS disabled, there is no boil at all (a safe default, not a
+JS-dependent one). Slider controls are labelled for screen readers; the accent ink clears WCAG AA
+(≥4.5:1) on the cream page. Body text is always a clean sans (Inter); handwriting fonts are used for
+headings and annotations only, never body copy.
 
 ---
 
@@ -186,10 +190,15 @@ for headings and annotations only, never body copy.
   is *generated* by inlining the module files, so the single-file demo can never drift from the
   reusable module.
 - **Verified in a real browser** (Chromium via Playwright): every dial changes its effect
-  (border-radius / displacement scale / animation duration / opacity), the macro moves 4 dials from
-  one input, `prefers-reduced-motion` freezes boil + self-draw, and the console is clean. The asset
-  pipeline was verified on a generated test drawing (89% of an unevenly-lit page made transparent,
-  ink cores at full alpha, manifest appended).
+  (border-radius / displacement scale / animation duration / opacity / overshoot), the macro moves
+  all seven dials from one input, `prefers-reduced-motion` freezes boil + self-draw, and the console
+  is clean. The asset pipeline was verified on a generated test drawing (89% of an unevenly-lit page
+  made transparent, ink cores at full alpha, potrace SVG traces the mark with `fill="currentColor"`,
+  manifest appended).
+- **Not yet device-tested on Safari/Firefox.** The boil animates an SVG filter (`feTurbulence`
+  `baseFrequency`) on HTML elements; all engines render SVG filters on HTML, but WebKit can
+  under-update SMIL-animated filter primitives, so verify the boil actually animates there before
+  shipping. Everything else uses widely-supported CSS/SVG.
 
 ## Credits / licenses
 

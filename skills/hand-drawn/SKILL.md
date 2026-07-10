@@ -29,20 +29,49 @@ The seven dials:
 | `--hd-line-weight` | stroke-weight variation | thin uniform | thick varied |
 | `--hd-overshoot` | corner gap / overshoot | closed corners | open, overshot |
 
+### Default values & derived mappings (to reproduce by hand)
+
+Sane starting defaults: **wobble 55 · grain 60 · rotation 45 · boil-speed 50 · sketchiness 50 ·
+line-weight 50 · overshoot 45.** Each dial becomes a real value like this:
+
+| Dial | How it maps (calc off the dial, or via the JS binder) | Range |
+|------|-------------------------------------------------------|-------|
+| `--hd-wobble` | each of 8 corner radii = `6px + seed·(wobble/100)`; classic seeds `249,9,219,9 / 9,219,9,249` | 6px → 255/15px |
+| `--hd-grain` | overlay `opacity = grain/100 · 0.15` (sweet spot 5-15% = dial 33-100) | 0 → 0.15 |
+| `--hd-rotation` | `rotate(rotation·0.05deg)` + small `translate(rotation·0.06px)` | 0 → ±5° |
+| `--hd-boil-speed` | binder writes `<animate> dur = (110−speed)·0.012s`; **≤1 = frozen** | 1.32s → 0.12s |
+| `--hd-sketchiness` | binder writes feDisplacementMap `scale = sketchiness·0.07`; Rough.js `roughness = 1 + sketchiness/100·1.8`; riso misreg = `1px + sketchiness·0.02px` | scale 0→7 · rough 1→2.8 |
+| `--hd-line-weight` | `stroke = 1.1px + line-weight·0.03px` | 1.1 → 4.1px |
+| `--hd-overshoot` | corner ticks offset `overshoot·0.12px` past the top-left & bottom-right corners | 0 → 12px |
+
 ---
 
 ## QUICK START (any project)
 
 1. Copy `modules/hand-drawn.css`, `modules/hand-drawn.js`, `modules/hand-drawn.svg.html` into the project.
-2. In `<head>`: `<link rel="stylesheet" href="hand-drawn.css">`
-3. First thing in `<body>`: paste the contents of `hand-drawn.svg.html` (the filter defs) and
-   add the grain overlay: `<svg class="hd-grain-overlay"><rect width="100%" height="100%" filter="url(#hd-grain)"/></svg>`
-4. Before `</body>`: `<script src="hand-drawn.js"></script>`
-5. Add `class="hd-page hd-body"` to `<body>`. Apply effect classes (below).
-6. Drive dials at runtime: `StyleEngine.setDial('--hd-wobble', 80)` — this is the macro seam.
+2. In `<head>`, load the CSS **and the fonts** (the look needs Inter for body + Caveat/Shantell
+   Sans for headings; without them headings fall back to Comic Sans — the "screams template" failure):
+   ```html
+   <link rel="stylesheet" href="hand-drawn.css">
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;600;800&family=Shantell+Sans:wght@500;700&display=swap" rel="stylesheet">
+   ```
+   (Offline/CSP: self-host with `@font-face` instead. The CSS still has fallbacks, just less convincing.)
+3. First thing in `<body>`: paste the contents of `hand-drawn.svg.html` (the filter defs), then
+   add the grain overlay: `<svg class="hd-grain-overlay" aria-hidden="true"><rect width="100%" height="100%" filter="url(#hd-grain)"/></svg>`
+4. **Only if you use the Rough.js shapes or rough-notation annotations** (below), load those libraries
+   BEFORE `hand-drawn.js` — they provide the `rough` and `RoughNotation` globals the module does NOT define:
+   ```html
+   <script src="https://unpkg.com/roughjs@4.6.6/bundled/rough.js"></script>
+   <script src="https://unpkg.com/rough-notation@0.2.1/lib/rough-notation.iife.js"></script>
+   ```
+   (Vendored copies live in `demo/vendor/`.)
+5. Before `</body>`: `<script src="hand-drawn.js"></script>`
+6. Add `class="hd-page hd-body"` to `<body>`. Apply effect classes (below).
+7. Drive dials at runtime: `StyleEngine.setDial('--hd-wobble', 80)` — this is the macro seam.
 
-If you cannot copy the module files, reproduce the rules below by hand — but keep the dial
-contract: no raw effect magnitudes, only `calc()` off `--hd-*`.
+If you cannot copy the module files, reproduce them by hand from the **Default values & derived
+mappings** table below — keep the dial contract: no raw effect magnitudes, only `calc()` off `--hd-*`.
 
 ---
 
@@ -200,7 +229,10 @@ arrow, a signature underline, or a mascot, **ask Brandon to draw it** rather tha
 
 Black ink on white + flat even light is what makes the next step clean.
 
-**Integrating the result** — run it through the prep script, then drop the output in:
+**Integrating the result** — run it through the prep script (**from inside the style-engine repo**,
+where `scripts/` and `assets/` live). To write into a different project, copy `scripts/prep_drawing.py`
+there (needs Pillow) and pass `--out-dir path/to/project/assets` — the PNG, optional SVG, and the
+manifest all land together in that dir:
 ```bash
 python scripts/prep_drawing.py mydrawing.jpg "curved arrow pointing right"
 ```

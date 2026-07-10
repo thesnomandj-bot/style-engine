@@ -22,9 +22,12 @@
          entirely under prefers-reduced-motion. -->
     <filter id="hd-boil" x="-20%" y="-20%" width="140%" height="140%">
       <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="2" seed="4" result="hd-boil-noise">
+        <!-- begin="indefinite" => the boil is FROZEN by default and only starts when
+             the JS binder calls beginElement() (and only when reduced-motion is off).
+             So with JS disabled OR reduced-motion on, there is no motion. -->
         <animate data-hd-boil attributeName="baseFrequency"
                  values="0.02;0.028;0.018;0.024" dur="0.9s"
-                 calcMode="discrete" repeatCount="indefinite"/>
+                 calcMode="discrete" begin="indefinite" repeatCount="indefinite"/>
       </feTurbulence>
       <feDisplacementMap in="SourceGraphic" in2="hd-boil-noise" data-hd-roughen scale="4"
                          xChannelSelector="R" yChannelSelector="G"/>

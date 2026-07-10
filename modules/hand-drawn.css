@@ -27,7 +27,7 @@
   /* ======================= THE DIALS · 0-100 only ======================= */
   /* These seven knobs are the entire public surface of this module.       */
   --hd-wobble:      55;   /* container edge wobble (crisp rect -> very wobbly) */
-  --hd-grain:       12;   /* paper grain overlay strength (used ~5-15)         */
+  --hd-grain:       60;   /* paper grain overlay strength (default -> ~9% opacity) */
   --hd-rotation:    45;   /* scatter rotation magnitude for nth-child elements */
   --hd-boil-speed:  50;   /* boil animation speed (0 = frozen, 100 = fast)     */
   --hd-sketchiness: 50;   /* roughen displacement + rough.js roughness         */
@@ -38,21 +38,22 @@
   /* Hand-drawn rule: limited palette + visible texture. Off-white paper.  */
   --hd-paper:   #faf6ef;  /* cream page base (#faf6ef range, mandated)      */
   --hd-ink:     #1a1a17;  /* near-black ink                                 */
-  --hd-accent:  #c8452f;  /* riso red                                       */
+  --hd-accent:  #b83c28;  /* riso red (AA >= 4.5:1 on cream for small text)  */
   --hd-accent2: #2f5ec8;  /* riso blue                                      */
   --hd-accent3: #e8b23a;  /* riso yellow                                    */
 
   /* ================= DERIVED · do NOT edit, edit the dial ================ */
   /* calc() maps each 0-100 dial onto the real unit its property needs.     */
   --_hd-k-wobble:   calc(var(--hd-wobble) / 100);            /* 0-1 mult     */
-  --_hd-grain-op:   calc(var(--hd-grain) / 100);             /* 0-1 opacity  */
+  --_hd-grain-op:   calc(var(--hd-grain) / 100 * 0.15);      /* 0-0.15 opacity (documented ceiling; a multiply overlay past ~0.2 blacks out the page). Sweet spot 5-15% = dial 33-100 */
   --_hd-rot:        calc(var(--hd-rotation) * 0.05deg);      /* 0-5deg       */
   --_hd-offset:     calc(var(--hd-rotation) * 0.06px);       /* 0-2.7px      */
   --_hd-stroke:     calc(1.1px + var(--hd-line-weight) * 0.03px); /* 1.1-4.1px */
-  --_hd-overshoot:  calc(var(--hd-overshoot) * 0.12px);      /* 0-12px       */
+  --_hd-overshoot:  calc(var(--hd-overshoot) * 0.12px);      /* 0-12px corner overshoot */
   --_hd-misreg:     calc(1px + var(--hd-sketchiness) * 0.02px);   /* 1-3px riso misregistration */
-  --_hd-boil-dur:   calc((110 - var(--hd-boil-speed)) * 0.012s);  /* ~1.32s -> 0.12s (CSS boil fallback) */
   --_hd-draw-dur:   calc((130 - var(--hd-boil-speed)) * 0.03s);   /* self-drawing line duration */
+  /* boil dur is written by the JS binder onto the SVG <animate> from --hd-boil-speed;
+     it is not a CSS property, so there is intentionally no CSS var for it. */
 }
 
 /* ============================= PAGE BASE ================================= */
@@ -90,11 +91,28 @@
     calc((6 + var(--hdr8) * var(--_hd-k-wobble)) * 1px);
   padding: 1.25rem 1.5rem;
   background: transparent;
+  position: relative;
 }
 /* No two identical: vary the seed set per element with nth-of-type. */
 .hd-box:nth-of-type(2n) { --hdr1: 15; --hdr2: 225; --hdr3: 20; --hdr4: 240; --hdr5: 235; --hdr6: 12; --hdr7: 250; --hdr8: 18; }
 .hd-box:nth-of-type(3n) { --hdr1: 180; --hdr2: 30; --hdr3: 255; --hdr4: 22; --hdr5: 40; --hdr6: 200; --hdr7: 26; --hdr8: 210; }
 .hd-box:nth-of-type(5n) { --hdr1: 60;  --hdr2: 200; --hdr3: 90; --hdr4: 175; --hdr5: 210; --hdr6: 55; --hdr7: 190; --hdr8: 70; }
+
+/* Corner overshoot/gap (human-hand signal #3): two L-shaped ink ticks that pull
+   PAST the top-left and bottom-right corners as --hd-overshoot rises (0 = on the
+   corner, 100 = overshoots 12px). This is the consumer of --_hd-overshoot. */
+.hd-box::before, .hd-box::after {
+  content: ""; position: absolute; width: 15px; height: 15px;
+  border: var(--_hd-stroke) solid var(--hd-ink); pointer-events: none;
+}
+.hd-box::before {
+  top: calc(var(--_hd-overshoot) * -1); left: calc(var(--_hd-overshoot) * -1);
+  border-right: none; border-bottom: none;
+}
+.hd-box::after {
+  bottom: calc(var(--_hd-overshoot) * -1); right: calc(var(--_hd-overshoot) * -1);
+  border-left: none; border-top: none;
+}
 
 /* ==================== 2 · SCATTER (nth-child primes) =================== */
 /* Prime steppers 3n/5n/7n so rotations don't fall on a repeating grid.

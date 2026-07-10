@@ -7,6 +7,13 @@
       "description": "curved arrow pointing right",
       "date": "2026-07-10",
       "source": "test_arrow.jpg"
+    },
+    {
+      "filename": "curved-arrow-pointing-right.svg",
+      "type": "svg",
+      "description": "curved arrow pointing right",
+      "date": "2026-07-10",
+      "source": "test_arrow.jpg"
     }
   ],
   "updated": "2026-07-10"
