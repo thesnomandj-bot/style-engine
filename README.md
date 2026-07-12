@@ -1,206 +1,288 @@
 # Style Engine
 
-A **rack-style visual-effects system for the web.** Think of an Ableton effect rack, but for
-how a web page *looks*: each effect is a module you drop in, every effect has a **strength dial**,
-and a **macro** can drive many dials from one knob.
+A **rack-style visual-effects system for the web.** Think of an Ableton Live effect rack, but
+for how a web page *looks*: each effect is a module you drop in, every effect has a **strength
+dial** (a number from 0 to 100), and a **macro** can drive many dials from one knob.
 
-**Module 1 — Hand-Drawn** is the first module. It makes a UI look like a human drew it: wobbly
-ink containers, roughened and "boiling" edges, scattered rotation, paper grain, self-drawing
-lines, sketchy Rough.js shapes, and hand-drawn underline/circle annotations.
+You do not write CSS values by hand. You turn a dial up or down, and the effect follows. Want
+wobblier containers? Turn up the Wobble dial. Want film grain? Turn up the Grain dial. Want
+everything to degrade at once like a worn VHS tape? Turn up the DECAY macro and watch dials
+across multiple modules move together. The system does the math; you just decide "how much."
+
+The whole point is that **nothing is hard-coded**. Every effect magnitude reads from a dial
+variable. Because every module speaks the same 0-100 language, one macro can reach across any
+combination of modules and move their dials in concert. That is what makes this a product, not
+just a collection of CSS tricks.
 
 ```text
-open demo/index.html  →  drag the sliders  →  watch every effect respond live
+open demo/index.html  ->  drag the sliders  ->  watch every effect respond live
 ```
 
 ---
 
-## The one idea that makes this a product: dials
+## Modules
 
-Every effect's **strength is a number from 0 to 100**, stored in a CSS variable. Nothing about
-an effect is hard-coded — not the wobble amount, not the grain opacity, not the boil speed. You
-change the *dial*, and the effect follows.
+The Style Engine ships four modules. Each one is a self-contained drop-in that registers with
+the shared `StyleEngine` global. You can use one module alone, or all four together.
 
-Module 1's seven dials (all `--hd-*`, "h-d" = hand-drawn):
+### 1. Hand-Drawn (`--hd-*`)
 
-| Dial | 0 | 100 |
-|------|---|-----|
-| `--hd-wobble` | crisp rectangle | very wobbly blob container |
-| `--hd-grain` | clean paper | heavy film grain |
-| `--hd-rotation` | perfect grid | ±5° scattered tiles |
-| `--hd-boil-speed` | frozen | fast "boiling" edges |
-| `--hd-sketchiness` | clean lines | very rough / scribbly |
-| `--hd-line-weight` | thin, uniform | thick, varied strokes |
-| `--hd-overshoot` | closed corners | open, overshooting corners |
+Makes a UI look like a human drew it: wobbly ink containers, roughened and "boiling" edges,
+scattered rotation on grid items, paper grain, self-drawing SVG lines, sketchy Rough.js shapes,
+and hand-drawn underline/circle annotations via rough-notation.
 
-Set one in CSS:
+**Seven dials:** Wobble, Grain, Rotation, Boil Speed, Sketchiness, Line Weight, Overshoot.
+
+### 2. Glitch (`--gl-*`)
+
+Digital breakage. RGB chromatic splits, positional jitter, signal dropouts (elements blink out),
+horizontal block/slice displacement, scanline overlays, and static noise. All animation is
+*stepped* (discrete jumps, no smooth easing) to feel like real digital corruption.
+
+**Seven dials:** RGB Split, Jitter, Dropout, Block Shift, Scanlines, Static, Rate.
+**Special API:** `StyleEngine.glitch.burst(element, milliseconds)` maxes every glitch effect on
+one element for a short burst, then restores it.
+
+### 3. Text-Motion (`--tm-*`)
+
+Composable text reveal animations. Six reveal types: typewriter, scramble (slot-machine
+character cycling), staggered-rise, cascade-drop, blur-in, and wipe. Each text element gets its
+reveal type via a `data-tm` attribute. Scramble uses discrete stepped intervals (never smooth
+interpolation) for an authentic mechanical feel.
+
+**Five dials:** Speed, Stagger, Randomness, Scramble Pool, Overshoot.
+**Special API:** `StyleEngine.text.reveal(element, type)` triggers or replays a reveal.
+
+### 4. Media-Decay (`--md-*`)
+
+Analog wear and degradation. Film grain (fine fractal noise overlay), dust specks and hairline
+scratches, tape-like warble (horizontal wave distortion), soft chroma ghosting (blurred duplicate,
+not a hard RGB split), sun-faded warm tint, edge vignette darkening, and projector-style
+brightness flutter. Warble and flutter use discrete stepping, like the glitch module.
+
+**Seven dials:** Grain, Dust, Warble, Ghosting, Tint, Vignette, Flutter.
+**Named presets:** `StyleEngine.mediaDecay.applyPreset('VINYL')` (also VHS, CASSETTE, CLEAN).
+
+---
+
+## The Dial Convention
+
+Every effect in every module follows the same rule: **strength is a number from 0 to 100**,
+stored in a namespaced CSS custom property.
+
+| Module      | Namespace | Example              |
+| ----------- | --------- | -------------------- |
+| Hand-Drawn  | `--hd-*`  | `--hd-wobble: 80`    |
+| Glitch      | `--gl-*`  | `--gl-rgb-split: 50` |
+| Text-Motion | `--tm-*`  | `--tm-speed: 70`     |
+| Media-Decay | `--md-*`  | `--md-grain: 40`     |
+
+Set a dial in CSS:
 
 ```css
-:root { --hd-wobble: 80; --hd-grain: 8; }
+:root { --hd-wobble: 80; --gl-scanlines: 30; }
 ```
 
-…or at runtime, which is how the sliders (and later the macro) do it:
+Or at runtime (which is how sliders and macros do it):
 
 ```js
 StyleEngine.setDial('--hd-wobble', 80);   // the effect updates immediately
 ```
 
-### Why "no hard-coded values" is the whole point
+Most effects read their dial directly through CSS `calc()`. A few effects live on SVG filter
+attributes that CSS cannot touch (displacement scale, animation duration, turbulence frequency).
+For those, a JavaScript "binder" reads the dial and writes the attribute. Either way, **the dial
+is the single source of truth.** If any effect had a hard-coded magnitude, a macro could not
+move it.
 
-Most effects can read their dial directly through CSS `calc()`. For example the paper-grain
-overlay is literally `opacity: calc(var(--hd-grain) / 100)`. A few effects live on **SVG filter
-attributes that CSS can't touch** (the roughen displacement `scale`, the boil `<animate>` speed).
-For those, a tiny JavaScript **binder** (`modules/hand-drawn.js`) reads the dial and writes the
-attribute. Either way, **the dial is the single source of truth.** If any effect had a hard-coded
-magnitude, a macro couldn't move it — and the macro is the product.
+---
 
-### The macro (already demonstrated)
+## The Macro System
 
-A macro is **one 0–100 knob mapped onto many dials**, exactly like an effect-rack macro. The demo
-ships a working one: the **"Hand-Made-ness"** slider. Drag it and all **seven** dials move together
-(each on its own curve). That is the seed of the future dedicated macro layer — it already works
-because every effect obeys a dial.
+A macro is **one 0-100 knob mapped onto many dials**, exactly like an Ableton Live effect-rack
+macro. You define which dials it drives, what range each dial should move through, what curve
+to apply (linear, ease, exponential), and what "window" of the macro's range activates each
+mapping.
 
 ```js
-// a macro is just: one input -> many setDial() calls, each with its own curve
-function setMacro(m) {
-  StyleEngine.setDial('--hd-wobble',      m);
-  StyleEngine.setDial('--hd-rotation',    m * 0.9);
-  StyleEngine.setDial('--hd-sketchiness', m);
-  StyleEngine.setDial('--hd-boil-speed',  m * 0.8);
-  StyleEngine.setDial('--hd-grain',       m * 0.28);
-  StyleEngine.setDial('--hd-line-weight', m);
-  StyleEngine.setDial('--hd-overshoot',   m);
+// Create a macro
+var id = StyleEngine.macro.create({
+  name: 'DECAY',
+  mappings: [
+    { cssVar: '--md-grain',    min: 0, max: 85, curve: 'ease',  window: [0, 40] },
+    { cssVar: '--md-warble',   min: 0, max: 65, curve: 'ease',  window: [30, 70] },
+    { cssVar: '--gl-dropout',  min: 0, max: 60, curve: 'exp',   window: [70, 100] }
+  ]
+});
+
+// Turn the knob
+StyleEngine.macro.setValue(id, 50);   // grain is maxed, warble is climbing, dropout is not yet active
+```
+
+The macro engine ships five **starter presets** (DECAY, VINYL, VHS, CASSETTE, HAND-MADE) that
+demonstrate cross-module mapping. Load one with:
+
+```js
+StyleEngine.macro.load(StyleEngine.macro.starterPresets.DECAY);
+StyleEngine.macro.setValue('decay-master', 75);
+```
+
+---
+
+## Preset Format (styleEnginePreset v1)
+
+The macro engine can serialize the **entire state** of every dial across every module, plus
+every macro definition, into a single JSON object. This is the `styleEnginePreset v1` format.
+
+```js
+var preset = StyleEngine.macro.serialize();   // capture current state
+// ... later ...
+StyleEngine.macro.load(preset);              // restore it exactly
+```
+
+The JSON structure:
+
+```json
+{
+  "styleEnginePreset": 1,
+  "name": "My Look",
+  "description": "Warm vintage with light glitch",
+  "dials": {
+    "--hd-wobble": 55,
+    "--gl-scanlines": 20,
+    "--md-tint": 40
+  },
+  "macros": [
+    {
+      "id": "decay-master",
+      "name": "DECAY",
+      "value": 50,
+      "mappings": [ ... ]
+    }
+  ]
 }
 ```
 
+Save it as a JSON file, share it, load it in another project. Any dials for modules that are
+not loaded are silently skipped.
+
 ---
 
-## What's in here
+## Dashboard (the Demo)
+
+The demo at `demo/index.html` is a single offline HTML file with a control panel on the right
+side. It is **generated** by `scripts/build_demo.py`, which inlines every module's CSS, JS, and
+SVG defs so the demo can never drift from the canonical module files.
+
+The panel shows every dial for every module, grouped by namespace. It also includes:
+
+- A **Hand-Made-ness macro** that drives all seven hand-drawn dials from one slider.
+- A **reveal-type dropdown** for switching text-motion animation styles.
+- **Preset buttons** (VINYL, VHS, CASSETTE, CLEAN) for the media-decay module.
+- A **DECAY macro** that drives dials across media-decay and glitch from one knob.
+
+Rebuild it after editing any `modules/*` file:
+
+```bash
+python scripts/build_demo.py
+```
+
+---
+
+## Quick Start: Adding to a Project
+
+For full integration instructions (with code examples for every module), see
+**[INTEGRATION.md](INTEGRATION.md)**.
+
+The short version:
+
+1. Copy the `modules/` files you need into your project.
+2. In `<head>`, link each module's CSS file.
+3. Just after `<body>`, paste each module's `.svg.html` contents (if the module has one).
+4. Before `</body>`, add each module's JS file. **Load `hand-drawn.js` first** (it creates
+   the shared `StyleEngine` registry). Load `macro.js` last.
+5. Apply effect classes to your elements (`hd-box`, `gl-target`, `tm-target`, `md-target`).
+6. Set initial dial values in `:root` CSS, or call `StyleEngine.setDial()` at runtime.
+
+---
+
+## File Structure
 
 ```text
 style-engine/
-├── skills/hand-drawn/SKILL.md   # the portable rulebook Claude follows in ANY project
-├── modules/
-│   ├── hand-drawn.css           # the dial contract + every effect (the reusable module)
-│   ├── hand-drawn.js            # the binder: dials -> SVG attrs; StyleEngine.setDial (macro seam)
-│   └── hand-drawn.svg.html      # the SVG filter defs (roughen / boil / grain)
-├── demo/
-│   ├── index.html               # single-file, offline live demo + slider/macro panel (GENERATED)
-│   └── vendor/                  # Rough.js + rough-notation (inlined into the demo)
-├── scripts/
-│   ├── build_demo.py            # assembles demo/index.html from modules/ (so it can't drift)
-│   └── prep_drawing.py          # ink photo -> transparent PNG (+ optional traced SVG)
-├── assets/
-│   ├── manifest.json            # log of prepped assets (filename, type, description, date, source)
-│   └── samples/                 # a sample source drawing
-└── README.md
++-- modules/
+|   +-- hand-drawn.css          # dials + effects for the hand-drawn module
+|   +-- hand-drawn.js           # binder: dials -> SVG attrs; creates StyleEngine registry
+|   +-- hand-drawn.svg.html     # SVG filter defs (roughen / boil / grain)
+|   +-- glitch.css              # dials + effects for digital breakage
+|   +-- glitch.js               # stepped glitch binder + burst API
+|   +-- glitch.svg.html         # SVG filter defs (static noise)
+|   +-- text-motion.css         # dials + keyframes for text reveals
+|   +-- text-motion.js          # reveal engine (typewriter, scramble, etc.)
+|   +-- media-decay.css         # dials + effects for analog wear
+|   +-- media-decay.js          # warble/flutter stepping, dust placement, ghosting
+|   +-- media-decay.svg.html    # SVG filter defs (film grain, dust threshold)
+|   +-- macro.js                # macro routing layer (depends on StyleEngine global)
++-- demo/
+|   +-- index.html              # single-file live demo (GENERATED by build_demo.py)
+|   +-- vendor/                 # Rough.js + rough-notation (inlined into the demo)
++-- scripts/
+|   +-- build_demo.py           # assembles demo/index.html from modules/
+|   +-- prep_drawing.py         # ink photo -> transparent PNG (+ optional traced SVG)
++-- skills/                     # portable SKILL.md rulebooks for Claude
++-- assets/
+|   +-- manifest.json           # log of prepped assets
+|   +-- samples/                # sample source drawings
++-- INTEGRATION.md              # full integration guide with code examples
++-- README.md                   # this file
 ```
 
 ---
 
-## Using Module 1 in your own project
+## How to Add a New Module
 
-1. Copy `modules/hand-drawn.css`, `modules/hand-drawn.js`, `modules/hand-drawn.svg.html`.
-2. In `<head>`: `<link rel="stylesheet" href="hand-drawn.css">`
-3. First thing inside `<body>`, paste the contents of `hand-drawn.svg.html`, then add the grain overlay:
-   ```html
-   <svg class="hd-grain-overlay" aria-hidden="true"><rect width="100%" height="100%" filter="url(#hd-grain)"/></svg>
+Every module copies the same shape. To add a fifth module (say, "particles" with namespace
+`--pt-*`):
+
+1. **Create `modules/particles.css`**: Define your dials as `--pt-*` custom properties in
+   `:root`, all scaled 0-100. Derive real units in a `--_pt-*` block using `calc()`. Write
+   effect classes that consume the derived values.
+
+2. **Create `modules/particles.js`**: For any effect that needs SVG attributes or canvas work
+   that CSS cannot reach, write a sync function. Register it:
+
+   ```js
+   StyleEngine.register('particles', particlesSync);
    ```
-4. Before `</body>`: `<script src="hand-drawn.js"></script>`
-5. Put `class="hd-page hd-body"` on `<body>`, then apply effect classes: `hd-box` (wobbly container),
-   `hd-scatter` (rotate children), `hd-roughen`, `hd-boil`, `hd-draw-path`, `hd-riso`.
-6. Rough.js shapes and rough-notation annotations are optional extras — see `skills/hand-drawn/SKILL.md`.
 
-The full rulebook (exact filter values, the six "human-hand" signals, failure modes to avoid,
-font rules) is in **`skills/hand-drawn/SKILL.md`**. Claude can load that skill and apply the style
-to any project without this repo present.
+   The registry calls your sync function once immediately and again on every `setDial()` call.
 
----
+3. **Create `modules/particles.svg.html`** (if needed): Any SVG filter defs your module uses.
+   Prefix all IDs with `pt-`.
 
-## The asset pipeline (real hand-drawn marks)
+4. **Add it to `build_demo.py`**: Read the new files, add dials to the panel, add a demo
+   section, include the CSS/JS/SVG in the output.
 
-The most convincing hand-drawn touches are *actually drawn*. Draw a mark in **black ink on white
-paper**, photograph it flat in even light, then:
+5. **Update `macro.js`**: Add your dial names to the `ALL_DIALS` array so `serialize()` captures
+   them in presets.
 
-```bash
-python scripts/prep_drawing.py mydrawing.jpg "curved arrow pointing right"
-```
-
-It flattens uneven lighting, turns the paper **truly transparent** (luminance → alpha, not a blend
-trick), and writes `assets/curved-arrow-pointing-right.png`. If [`potrace`](http://potrace.sourceforge.net/)
-is installed it also writes a traced `.svg` with `fill="currentColor"`, so CSS can recolor the mark:
-
-```html
-<img src="assets/curved-arrow-pointing-right.png" alt="curved arrow">
-<!-- or, with the traced SVG, recolor via the ink palette: -->
-<svg style="color: var(--hd-accent)"> … traced path … </svg>
-```
-
-Every run appends a record to `assets/manifest.json`. Requirements: **Pillow** (`pip install Pillow`).
-potrace is optional — `brew install potrace` to enable SVG tracing; without it the PNG is still produced.
-
-Useful flags: `--invert` (white ink on dark paper), `--no-flatten` (for solid-fill art, not line
-art), `--gamma 1.5` (punchier ink), `--ink "#b83c28"` (recolor the PNG), `--name arrow`.
-
----
-
-## How future modules bolt on (the part that matters for the roadmap)
-
-Every module copies Module 1's shape and **reuses the exact same 0–100 dial convention** — only the
-two-letter namespace changes:
-
-| Module | Namespace | Example dials |
-|--------|-----------|---------------|
-| Hand-Drawn (this one) | `--hd-*` | `--hd-wobble`, `--hd-grain`, `--hd-boil-speed` |
-| Glitch (planned) | `--gl-*` | `--gl-rgb-split`, `--gl-slice`, `--gl-jitter` |
-| Text-Motion (planned) | `--tm-*` | `--tm-stagger`, `--tm-spring`, `--tm-blur` |
-| Media-Decay (planned) | `--md-*` | `--md-vhs`, `--md-bleed`, `--md-dropout` |
-
-Each new module is just: a `.css` file exposing its dials in `:root` and deriving real units with
-`calc()`, a `.js` binder for any SVG/canvas attributes CSS can't reach, and (if it uses SVG
-filters) a `.svg.html` defs file. Every binder attaches to the same global:
-
-```js
-window.StyleEngine.setDial(name, value);   // one shared API for every module
-```
-
-Because all modules speak the same language — **0–100 dials, one `setDial` API** — the future
-**macro layer** doesn't need to know anything module-specific. A macro is a saved mapping from one
-knob to any set of dials across *any* modules (e.g. a "Degrade" macro that pulls `--hd-boil-speed`,
-`--gl-slice`, and `--md-vhs` at once). Nothing here needs rework to get there; that's the entire
-reason for the dial contract.
+Because all modules speak the same language (0-100 dials, one `setDial` API), the macro engine
+does not need any changes to drive your new module's dials.
 
 ---
 
 ## Accessibility
 
-All motion is **opt-in**. Self-drawing lines and scatter transitions are gated by a
-`prefers-reduced-motion: reduce` media query. The SVG boil starts **frozen** (`begin="indefinite"`)
-and only animates once the JS binder starts it — which it does *only* when reduced motion is off — so
-with reduced motion on, **or** with JS disabled, there is no boil at all (a safe default, not a
-JS-dependent one). Slider controls are labelled for screen readers; the accent ink clears WCAG AA
-(≥4.5:1) on the cream page. Body text is always a clean sans (Inter); handwriting fonts are used for
-headings and annotations only, never body copy.
+All motion is opt-in. Animations are gated by `prefers-reduced-motion: reduce`. The SVG boil
+starts frozen and only animates when reduced motion is off. Glitch stepping, warble, flutter,
+and text reveals all respect the preference. Slider controls are labelled for screen readers.
+The accent ink clears WCAG AA contrast on the cream page. Body text is always a clean sans-serif
+(Inter); handwriting fonts are used for headings only.
 
 ---
 
-## Dev notes
+## Credits
 
-- **Rebuild the demo** after editing any `modules/*` file: `python scripts/build_demo.py`. The demo
-  is *generated* by inlining the module files, so the single-file demo can never drift from the
-  reusable module.
-- **Verified in a real browser** (Chromium via Playwright): every dial changes its effect
-  (border-radius / displacement scale / animation duration / opacity / overshoot), the macro moves
-  all seven dials from one input, `prefers-reduced-motion` freezes boil + self-draw, and the console
-  is clean. The asset pipeline was verified on a generated test drawing (89% of an unevenly-lit page
-  made transparent, ink cores at full alpha, potrace SVG traces the mark with `fill="currentColor"`,
-  manifest appended).
-- **Not yet device-tested on Safari/Firefox.** The boil animates an SVG filter (`feTurbulence`
-  `baseFrequency`) on HTML elements; all engines render SVG filters on HTML, but WebKit can
-  under-update SMIL-animated filter primitives, so verify the boil actually animates there before
-  shipping. Everything else uses widely-supported CSS/SVG.
-
-## Credits / licenses
-
-Bundled in `demo/vendor/` and inlined into the demo: [Rough.js](https://github.com/rough-stuff/rough)
-and [rough-notation](https://github.com/rough-stuff/rough-notation), both MIT-licensed.
+Bundled in `demo/vendor/` and inlined into the demo:
+[Rough.js](https://github.com/rough-stuff/rough) and
+[rough-notation](https://github.com/rough-stuff/rough-notation), both MIT-licensed.

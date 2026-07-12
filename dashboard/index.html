@@ -3,12 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Style Engine — live demo (all modules)</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23faf6ef'/%3E%3Cpath d='M15,70 C35,20 65,90 88,30' stroke='%231a1a17' stroke-width='9' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;600;800&family=Shantell+Sans:wght@500;700&display=swap" rel="stylesheet">
+<title>Style Engine Dashboard</title>
 <style>
-/* ===== CANONICAL MODULE CSS (inlined verbatim from modules/) ===== */
+/* ===== MODULE CSS (inlined verbatim) ===== */
+
 /* -- hand-drawn.css -- */
 /* ============================================================================
    STYLE ENGINE · MODULE 1 · HAND-DRAWN
@@ -696,75 +694,220 @@
   .md-flutter { /* brightness pinned via --_md-flutter-b above */ }
 }
 
-/* ===== demo chrome ===== */
 
-/* ---------- demo chrome (layout only; no effect magnitudes here) ---------- */
-* { box-sizing: border-box; }
-body { margin: 0; }
-.wrap { max-width: 1180px; margin: 0 auto; padding: 2rem 1.25rem 6rem; }
-h1.title { font-size: clamp(2.4rem, 6vw, 4rem); margin: .2em 0 .1em; line-height: 1; }
-.tagline { max-width: 60ch; opacity: .8; }
-section.demo { margin: 3.2rem 0; }
-section.demo > h2 { font-size: 1.6rem; margin: 0 0 .2em; }
-.demo__label { font-family: "Caveat","Shantell Sans",cursive; font-size: 1.3rem; color: var(--hd-accent); }
-.demo__note { font-size: .9rem; opacity: .7; max-width: 62ch; margin: .2rem 0 1.1rem; }
-.grid { display: grid; gap: 1.1rem; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
-.chip { background: #fff; border: 1px solid var(--hd-ink); padding: .8rem 1rem; }
-.sample-fill { background: var(--hd-accent); color: var(--hd-paper); padding: 1.5rem; font-weight: 600; }
-canvas { max-width: 100%; height: auto; background: transparent; }
+/* ===== DASHBOARD CHROME ===== */
 
-/* control panel */
-.panel { position: fixed; top: 0; right: 0; width: 300px; height: 100vh; overflow-y: auto;
-         background: rgba(255,255,255,.92); border-left: 2px solid var(--hd-ink);
-         padding: 1.1rem 1.1rem 3rem; z-index: 10000;
-         -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
-.panel h3 { margin: .2rem 0 .1rem; font-size: 1.05rem; }
-.panel .sub { font-size: .78rem; opacity: .65; margin: 0 0 1rem; }
-.dial { margin: .55rem 0 .95rem; }
-.dial label { display: flex; justify-content: space-between; font-size: .82rem; font-weight: 600; }
-.dial output { font-variant-numeric: tabular-nums; opacity: .7; }
-.dial input[type=range] { width: 100%; margin-top: .25rem; accent-color: var(--hd-accent); }
-.macro { border: 2px dashed var(--hd-accent); padding: .7rem .8rem; border-radius: 8px; margin-bottom: 1rem; background: rgba(200,69,47,.06); }
-.macro label { color: var(--hd-accent); }
-.wrap { padding-right: 320px; }
-@media (max-width: 820px) {
-  .panel { position: static; width: auto; height: auto; border-left: none; border-bottom: 2px solid var(--hd-ink); }
-  .wrap { padding-right: 1.25rem; }
+/* ===== dashboard chrome — dark hardware rack aesthetic ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#1a1a1a;color:#e0e0e0;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  line-height:1.5;
 }
-.btn { font: inherit; border: 1px solid var(--hd-ink); background: var(--hd-paper); padding: .4rem .8rem; cursor: pointer; }
-.rmnote { font-size: .78rem; opacity: .7; border-top: 1px dashed var(--hd-ink); padding-top: .7rem; margin-top: 1rem; }
 
-/* panel section dividers */
-.panel-section { border-top: 1px solid rgba(0,0,0,.12); padding-top: .8rem; margin-top: .8rem; }
-.panel-section:first-of-type { border-top: none; margin-top: 0; }
-.panel-section h4 { font-size: .88rem; margin: 0 0 .4rem; opacity: .6; text-transform: uppercase; letter-spacing: .05em; }
-.btn-group { display: flex; flex-wrap: wrap; gap: .4rem; margin: .5rem 0; }
-.btn-sm { font: inherit; font-size: .78rem; border: 1px solid var(--hd-ink); background: var(--hd-paper); padding: .25rem .55rem; cursor: pointer; }
-.btn-sm:hover { background: var(--hd-ink); color: var(--hd-paper); }
-.btn-sm.active { background: var(--hd-accent); color: var(--hd-paper); border-color: var(--hd-accent); }
-select.demo-select { font: inherit; font-size: .82rem; padding: .3rem .5rem; border: 1px solid var(--hd-ink); background: var(--hd-paper); width: 100%; margin: .3rem 0 .6rem; }
+/* ---- Header ---- */
+.dash-header{
+  background:#111;border-bottom:2px solid #333;
+  padding:0.85rem 1.5rem;display:flex;align-items:baseline;gap:1rem;
+}
+.dash-title{
+  font-size:1.35rem;font-weight:800;letter-spacing:0.15em;color:#fff;
+}
+.dash-subtitle{font-size:0.82rem;opacity:0.45;letter-spacing:0.05em;}
 
-/* module section separators in the main content area */
-.module-sep { border: none; border-top: 3px dashed var(--hd-ink); margin: 4rem 0 3rem; opacity: .25; }
+/* ---- Preview Stage ---- */
+.dash-preview{padding:1.5rem 1.5rem 0.5rem;}
+.preview-stage{
+  max-width:720px;margin:0 auto;
+  background:var(--hd-paper,#faf6ef);color:var(--hd-ink,#1a1a17);
+  border-radius:8px;padding:2rem;
+  border:1px solid #444;
+  box-shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+.preview-stage h1{font-size:clamp(1.6rem,5vw,2.8rem);margin:0 0 0.3em;line-height:1.1;}
+.preview-stage p{max-width:56ch;opacity:0.8;margin-bottom:1rem;}
+.preview-image{
+  position:relative;isolation:isolate;
+  margin:1rem 0;border-radius:6px;overflow:hidden;
+}
+.preview-image svg{display:block;}
+.preview-card{margin:1rem 0;}
+.preview-btn{
+  font:inherit;font-size:0.85rem;
+  background:transparent;border:1px solid var(--hd-ink,#1a1a17);
+  padding:0.35rem 0.8rem;cursor:pointer;margin-top:0.5rem;
+}
 
-/* glitch demo */
-.glitch-card { background: #111; color: #0f0; font-family: monospace; padding: 2rem; position: relative; min-height: 180px; overflow: hidden; }
-.glitch-heading { font-size: 2rem; font-weight: 800; letter-spacing: .04em; }
-.glitch-photo-placeholder { width: 100%; height: 160px; background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #533483); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.4); font-size: .85rem; }
+/* ---- Sections ---- */
+.dash-section{padding:0.75rem 1.5rem 1.25rem;}
+.dash-section-title{
+  font-size:0.82rem;font-weight:700;letter-spacing:0.12em;
+  text-transform:uppercase;color:#777;
+  margin-bottom:0.65rem;border-bottom:1px solid #333;padding-bottom:0.35rem;
+}
 
-/* text-motion demo */
-.tm-demo-text { font-size: clamp(1.6rem, 4vw, 2.8rem); font-weight: 700; line-height: 1.3; margin: 1rem 0; }
-.tm-sample { font-size: 1.15rem; margin: .6rem 0; }
+/* ---- Module Chain (horizontal scroll) ---- */
+.module-chain{
+  display:flex;gap:0.85rem;overflow-x:auto;padding-bottom:0.6rem;
+  -webkit-overflow-scrolling:touch;
+}
+.module-chain::-webkit-scrollbar{height:5px;}
+.module-chain::-webkit-scrollbar-track{background:#111;border-radius:3px;}
+.module-chain::-webkit-scrollbar-thumb{background:#444;border-radius:3px;}
 
-/* media-decay demo */
-.md-photo-placeholder { width: 100%; height: 200px; position: relative; overflow: hidden; }
-.md-photo-placeholder svg { width: 100%; height: 100%; }
-.md-text-block { padding: 1.5rem; background: #f5f0e6; }
+/* ---- Module Panel (rack unit) ---- */
+.mod-panel{
+  min-width:215px;max-width:260px;flex-shrink:0;
+  background:#222;border:1px solid #3a3a3a;border-radius:6px;
+  border-top:3px solid var(--mod-color,#888);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 2px 8px rgba(0,0,0,0.3);
+}
+.mod-header{
+  display:flex;align-items:center;gap:0.45rem;
+  padding:0.5rem 0.7rem;border-bottom:1px solid #333;
+}
+.mod-accent{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--mod-color);box-shadow:0 0 6px var(--mod-color);
+}
+.mod-name{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;flex:1;}
+.mod-bypass{
+  font-size:0.65rem;font-weight:600;opacity:0.6;
+  cursor:pointer;display:flex;align-items:center;gap:0.25rem;
+  user-select:none;
+}
+.mod-bypass input{cursor:pointer;width:13px;height:13px;}
+.mod-dials{padding:0.35rem 0.7rem 0.6rem;}
+.mod-dial{margin:0.3rem 0;}
+.mod-dial label{
+  display:flex;justify-content:space-between;
+  font-size:0.72rem;font-weight:600;opacity:0.75;
+}
+.mod-dial output{
+  font-variant-numeric:tabular-nums;color:var(--mod-color);
+  min-width:2em;text-align:right;
+}
+.mod-dial input[type=range]{
+  width:100%;margin-top:0.1rem;accent-color:var(--mod-color);
+  height:5px;cursor:pointer;
+}
+
+/* ---- Macro Rack ---- */
+.macro-rack{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+  gap:0.65rem;
+}
+.macro-slot{
+  background:#222;border:1px solid #3a3a3a;
+  border-left:3px solid #a855f7;border-radius:6px;
+  padding:0.5rem 0.65rem;
+}
+.macro-header{display:flex;flex-wrap:wrap;gap:0.35rem;align-items:center;}
+.macro-name{
+  background:transparent;border:1px solid #555;color:#e0e0e0;
+  font-size:0.75rem;padding:0.15rem 0.35rem;border-radius:3px;
+  width:90px;font-family:inherit;
+}
+.macro-name:focus{border-color:#a855f7;outline:none;}
+.macro-slider-row{
+  display:flex;align-items:center;gap:0.35rem;flex:1;min-width:80px;
+}
+.macro-value{flex:1;accent-color:#a855f7;height:5px;cursor:pointer;}
+.macro-readout{
+  font-size:0.75rem;font-variant-numeric:tabular-nums;color:#a855f7;
+  min-width:1.8em;text-align:right;
+}
+.macro-add-btn{
+  font:inherit;font-size:0.65rem;
+  background:#333;color:#a855f7;border:1px solid #a855f7;
+  padding:0.1rem 0.45rem;border-radius:3px;cursor:pointer;
+}
+.macro-add-btn:hover{background:#a855f7;color:#111;}
+.macro-mappings{margin-top:0.3rem;}
+.mapping-row{
+  display:flex;flex-wrap:wrap;gap:0.25rem;padding:0.25rem 0;
+  border-top:1px solid #2a2a2a;align-items:center;font-size:0.68rem;
+}
+.mapping-row select,
+.mapping-row input[type=number]{
+  background:#1a1a1a;color:#e0e0e0;border:1px solid #555;
+  font-size:0.68rem;padding:0.12rem 0.2rem;border-radius:2px;
+  font-family:inherit;
+}
+.mapping-row select{max-width:105px;}
+.mapping-row input[type=number]{width:40px;}
+.mapping-row label{display:flex;align-items:center;gap:0.15rem;opacity:0.6;}
+.map-remove{
+  background:transparent;color:#f55;border:1px solid #f55;
+  font-size:0.6rem;padding:0.08rem 0.25rem;cursor:pointer;
+  border-radius:2px;margin-left:auto;
+}
+.map-remove:hover{background:#f55;color:#111;}
+
+/* ---- Preset Panel ---- */
+.preset-bar{display:flex;flex-wrap:wrap;gap:0.45rem;margin-bottom:0.65rem;}
+.preset-btn{
+  font:inherit;font-size:0.8rem;font-weight:700;letter-spacing:0.08em;
+  background:#2a2a2a;color:#e0e0e0;border:1px solid #555;
+  padding:0.35rem 0.9rem;border-radius:4px;cursor:pointer;
+  transition:background 0.12s,border-color 0.12s;
+}
+.preset-btn:hover{background:#3a3a3a;border-color:#888;}
+.preset-btn:active{background:#444;}
+.preset-io{display:flex;gap:0.45rem;flex-wrap:wrap;}
+.io-btn{
+  font:inherit;font-size:0.75rem;
+  background:#333;color:#aaa;border:1px solid #555;
+  padding:0.3rem 0.65rem;border-radius:4px;cursor:pointer;
+}
+.io-btn:hover{background:#444;color:#ddd;}
+.io-label{display:inline-flex;align-items:center;cursor:pointer;}
+
+/* ---- Export Panel ---- */
+.export-panel summary{
+  cursor:pointer;list-style:none;
+  font-size:0.82rem;font-weight:700;letter-spacing:0.12em;
+  text-transform:uppercase;color:#777;
+  border-bottom:1px solid #333;padding-bottom:0.35rem;
+}
+.export-panel summary::-webkit-details-marker{display:none;}
+.export-panel summary::marker{content:"";}
+.export-panel summary::before{content:"\25B6  ";font-size:0.65em;}
+.export-panel[open] summary::before{content:"\25BC  ";}
+.export-buttons{display:flex;gap:0.45rem;margin:0.5rem 0;}
+.export-output{
+  background:#111;color:#4ade80;border:1px solid #333;
+  padding:0.65rem;font-size:0.72rem;font-family:ui-monospace,monospace;
+  max-height:200px;overflow:auto;border-radius:4px;
+  white-space:pre-wrap;word-break:break-all;
+  display:none;
+}
+.export-output.visible{display:block;}
+
+/* ---- Toast ---- */
+.dash-toast{
+  position:fixed;bottom:1.5rem;right:1.5rem;
+  background:#333;color:#4ade80;
+  padding:0.5rem 0.9rem;border-radius:6px;font-size:0.82rem;
+  z-index:10000;opacity:0;transform:translateY(10px);
+  transition:opacity 0.2s,transform 0.2s;pointer-events:none;
+  border:1px solid #555;
+}
+.dash-toast.show{opacity:1;transform:translateY(0);}
+
+/* ---- Responsive ---- */
+@media(max-width:640px){
+  .dash-header{flex-direction:column;gap:0.2rem;}
+  .mod-panel{min-width:190px;}
+  .macro-rack{grid-template-columns:1fr;}
+  .preview-stage{padding:1.2rem;}
+}
 
 </style>
 </head>
-<body class="hd-page hd-body">
-<!-- ===== CANONICAL SVG FILTER DEFS (inlined from modules/) ===== -->
+<body>
+
+<!-- ===== SVG FILTER DEFS (inlined from modules) ===== -->
 <!-- ==========================================================================
      STYLE ENGINE · MODULE 1 · HAND-DRAWN · SVG FILTER DEFS
      Paste this block ONCE near the top of <body>. It defines the three SVG
@@ -925,367 +1068,164 @@ select.demo-select { font: inherit; font-size: .82rem; padding: .3rem .5rem; bor
   </defs>
 </svg>
 
-<!-- full-page grain overlay -->
+
+<!-- full-page grain overlay (hand-drawn module) -->
 <svg class="hd-grain-overlay" aria-hidden="true"><rect width="100%" height="100%" filter="url(#hd-grain)"/></svg>
 
+<!-- ===== DASHBOARD UI ===== -->
 
+<header class="dash-header">
+  <h1 class="dash-title">STYLE ENGINE</h1>
+  <span class="dash-subtitle">Dashboard v1.0</span>
+</header>
 
-<aside class="panel" aria-label="Style Engine control panel">
-  <h3>Style Engine · dials</h3>
-  <p class="sub">Every slider writes a namespaced CSS variable 0-100. The panel is the seed of the future macro UI.</p>
-
-  <div class="macro">
-    <div class="dial"><label for="smacro">MACRO · Hand-Made-ness<output id="outmacro" for="smacro">50</output></label>
-    <input id="smacro" type="range" min="0" max="100" value="50" aria-label="Macro: Hand-Made-ness" oninput="setMacro(this.value)"></div>
-    <p class="sub" style="margin:0">One dial drives many params (wobble, rotation, sketchiness, boil, grain), exactly like an Ableton rack macro.</p>
-  </div>
-
-  <div class="panel-section">
-    <h4>Hand-Drawn <code>--hd-*</code></h4>
-    <div class="dial"><label for="shd_wobble">Wobble<output id="out--hd-wobble" for="shd_wobble">55</output></label><input id="shd_wobble" type="range" min="0" max="100" value="55" aria-label="Wobble" oninput="setDial('--hd-wobble', this.value)"></div>
-<div class="dial"><label for="shd_grain">Grain<output id="out--hd-grain" for="shd_grain">60</output></label><input id="shd_grain" type="range" min="0" max="100" value="60" aria-label="Grain" oninput="setDial('--hd-grain', this.value)"></div>
-<div class="dial"><label for="shd_rotation">Rotation (scatter)<output id="out--hd-rotation" for="shd_rotation">45</output></label><input id="shd_rotation" type="range" min="0" max="100" value="45" aria-label="Rotation (scatter)" oninput="setDial('--hd-rotation', this.value)"></div>
-<div class="dial"><label for="shd_boil_speed">Boil speed<output id="out--hd-boil-speed" for="shd_boil_speed">50</output></label><input id="shd_boil_speed" type="range" min="0" max="100" value="50" aria-label="Boil speed" oninput="setDial('--hd-boil-speed', this.value)"></div>
-<div class="dial"><label for="shd_sketchiness">Sketchiness<output id="out--hd-sketchiness" for="shd_sketchiness">50</output></label><input id="shd_sketchiness" type="range" min="0" max="100" value="50" aria-label="Sketchiness" oninput="setDial('--hd-sketchiness', this.value)"></div>
-<div class="dial"><label for="shd_line_weight">Line weight<output id="out--hd-line-weight" for="shd_line_weight">50</output></label><input id="shd_line_weight" type="range" min="0" max="100" value="50" aria-label="Line weight" oninput="setDial('--hd-line-weight', this.value)"></div>
-<div class="dial"><label for="shd_overshoot">Overshoot<output id="out--hd-overshoot" for="shd_overshoot">45</output></label><input id="shd_overshoot" type="range" min="0" max="100" value="45" aria-label="Overshoot" oninput="setDial('--hd-overshoot', this.value)"></div>
-  </div>
-
-  <div class="panel-section">
-    <h4>Glitch <code>--gl-*</code></h4>
-    <div class="dial"><label for="sgl_rgb_split">RGB Split<output id="out--gl-rgb-split" for="sgl_rgb_split">0</output></label><input id="sgl_rgb_split" type="range" min="0" max="100" value="0" aria-label="RGB Split" oninput="setDial('--gl-rgb-split', this.value)"></div>
-<div class="dial"><label for="sgl_jitter">Jitter<output id="out--gl-jitter" for="sgl_jitter">0</output></label><input id="sgl_jitter" type="range" min="0" max="100" value="0" aria-label="Jitter" oninput="setDial('--gl-jitter', this.value)"></div>
-<div class="dial"><label for="sgl_dropout">Dropout<output id="out--gl-dropout" for="sgl_dropout">0</output></label><input id="sgl_dropout" type="range" min="0" max="100" value="0" aria-label="Dropout" oninput="setDial('--gl-dropout', this.value)"></div>
-<div class="dial"><label for="sgl_block_shift">Block Shift<output id="out--gl-block-shift" for="sgl_block_shift">0</output></label><input id="sgl_block_shift" type="range" min="0" max="100" value="0" aria-label="Block Shift" oninput="setDial('--gl-block-shift', this.value)"></div>
-<div class="dial"><label for="sgl_scanlines">Scanlines<output id="out--gl-scanlines" for="sgl_scanlines">0</output></label><input id="sgl_scanlines" type="range" min="0" max="100" value="0" aria-label="Scanlines" oninput="setDial('--gl-scanlines', this.value)"></div>
-<div class="dial"><label for="sgl_static">Static<output id="out--gl-static" for="sgl_static">0</output></label><input id="sgl_static" type="range" min="0" max="100" value="0" aria-label="Static" oninput="setDial('--gl-static', this.value)"></div>
-<div class="dial"><label for="sgl_rate">Rate<output id="out--gl-rate" for="sgl_rate">0</output></label><input id="sgl_rate" type="range" min="0" max="100" value="0" aria-label="Rate" oninput="setDial('--gl-rate', this.value)"></div>
-    <button class="btn-sm" onclick="StyleEngine.glitch.burst(document.querySelector('.gl-target'), 500)">Burst!</button>
-  </div>
-
-  <div class="panel-section">
-    <h4>Text-Motion <code>--tm-*</code></h4>
-    <div class="dial"><label for="stm_speed">Speed<output id="out--tm-speed" for="stm_speed">50</output></label><input id="stm_speed" type="range" min="0" max="100" value="50" aria-label="Speed" oninput="setDial('--tm-speed', this.value)"></div>
-<div class="dial"><label for="stm_stagger">Stagger<output id="out--tm-stagger" for="stm_stagger">45</output></label><input id="stm_stagger" type="range" min="0" max="100" value="45" aria-label="Stagger" oninput="setDial('--tm-stagger', this.value)"></div>
-<div class="dial"><label for="stm_randomness">Randomness<output id="out--tm-randomness" for="stm_randomness">0</output></label><input id="stm_randomness" type="range" min="0" max="100" value="0" aria-label="Randomness" oninput="setDial('--tm-randomness', this.value)"></div>
-<div class="dial"><label for="stm_scramble_pool">Scramble Pool<output id="out--tm-scramble-pool" for="stm_scramble_pool">30</output></label><input id="stm_scramble_pool" type="range" min="0" max="100" value="30" aria-label="Scramble Pool" oninput="setDial('--tm-scramble-pool', this.value)"></div>
-<div class="dial"><label for="stm_overshoot">Overshoot<output id="out--tm-overshoot" for="stm_overshoot">40</output></label><input id="stm_overshoot" type="range" min="0" max="100" value="40" aria-label="Overshoot" oninput="setDial('--tm-overshoot', this.value)"></div>
-    <div style="margin:.4rem 0">
-      <label for="tmRevealType" style="font-size:.82rem;font-weight:600">Reveal type</label>
-      <select id="tmRevealType" class="demo-select" onchange="switchRevealType(this.value)">
-        <option value="staggered-rise">staggered-rise</option>
-        <option value="cascade-drop">cascade-drop</option>
-        <option value="typewriter">typewriter</option>
-        <option value="scramble">scramble</option>
-        <option value="blur-in">blur-in</option>
-        <option value="wipe">wipe</option>
-      </select>
+<section class="dash-preview" id="preview">
+  <div class="preview-stage">
+    <h1 class="hd-hand gl-target md-target" data-tm="scramble">STYLE ENGINE PREVIEW</h1>
+    <p class="hd-body">Every visual effect is driven by a 0&ndash;100 dial. Compose your look with the modules below, wire up macros, then export.</p>
+    <div class="preview-image md-target">
+      <svg viewBox="0 0 400 180" width="100%" height="180" aria-hidden="true">
+        <defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#b83c28"/>
+          <stop offset="50%" stop-color="#2f5ec8"/>
+          <stop offset="100%" stop-color="#e8b23a"/>
+        </linearGradient></defs>
+        <rect width="400" height="180" fill="url(#pg)" rx="8"/>
+      </svg>
     </div>
-    <button class="btn-sm" onclick="replayTextMotion()">Replay</button>
+    <div class="hd-box hd-body md-target preview-card"><strong>Sample Card</strong><br>A wobbly container with analog wear. Turn dials to see effects.</div>
+    <button class="preview-btn hd-body" onclick="replayText()">Replay Text Reveal</button>
   </div>
+</section>
 
-  <div class="panel-section">
-    <h4>Media-Decay <code>--md-*</code></h4>
-    <div class="dial"><label for="smd_grain">Grain<output id="out--md-grain" for="smd_grain">0</output></label><input id="smd_grain" type="range" min="0" max="100" value="0" aria-label="Grain" oninput="setDial('--md-grain', this.value)"></div>
-<div class="dial"><label for="smd_dust">Dust<output id="out--md-dust" for="smd_dust">0</output></label><input id="smd_dust" type="range" min="0" max="100" value="0" aria-label="Dust" oninput="setDial('--md-dust', this.value)"></div>
-<div class="dial"><label for="smd_warble">Warble<output id="out--md-warble" for="smd_warble">0</output></label><input id="smd_warble" type="range" min="0" max="100" value="0" aria-label="Warble" oninput="setDial('--md-warble', this.value)"></div>
-<div class="dial"><label for="smd_ghosting">Ghosting<output id="out--md-ghosting" for="smd_ghosting">0</output></label><input id="smd_ghosting" type="range" min="0" max="100" value="0" aria-label="Ghosting" oninput="setDial('--md-ghosting', this.value)"></div>
-<div class="dial"><label for="smd_tint">Tint<output id="out--md-tint" for="smd_tint">0</output></label><input id="smd_tint" type="range" min="0" max="100" value="0" aria-label="Tint" oninput="setDial('--md-tint', this.value)"></div>
-<div class="dial"><label for="smd_vignette">Vignette<output id="out--md-vignette" for="smd_vignette">0</output></label><input id="smd_vignette" type="range" min="0" max="100" value="0" aria-label="Vignette" oninput="setDial('--md-vignette', this.value)"></div>
-<div class="dial"><label for="smd_flutter">Flutter<output id="out--md-flutter" for="smd_flutter">0</output></label><input id="smd_flutter" type="range" min="0" max="100" value="0" aria-label="Flutter" oninput="setDial('--md-flutter', this.value)"></div>
-    <div class="btn-group">
-      <button class="btn-sm" onclick="applyMdPreset('VINYL')">VINYL</button>
-      <button class="btn-sm" onclick="applyMdPreset('VHS')">VHS</button>
-      <button class="btn-sm" onclick="applyMdPreset('CASSETTE')">CASSETTE</button>
-      <button class="btn-sm" onclick="applyMdPreset('CLEAN')">CLEAN</button>
+<section class="dash-section" id="modules">
+  <h2 class="dash-section-title">Module Chain</h2>
+  <div class="module-chain">
+    <div class="mod-panel" data-module="hand-drawn" style="--mod-color:#b83c28">
+      <div class="mod-header"><span class="mod-accent"></span><span class="mod-name">HAND-DRAWN</span><label class="mod-bypass" title="Bypass: zero all dials"><input type="checkbox" data-bypass="hand-drawn"> BYP</label></div>
+      <div class="mod-dials">
+        <div class="mod-dial"><label><span class="dial-name">Wobble</span><output data-readout="--hd-wobble">55</output></label><input type="range" min="0" max="100" value="55" data-dial="--hd-wobble" data-module="hand-drawn"></div>
+        <div class="mod-dial"><label><span class="dial-name">Grain</span><output data-readout="--hd-grain">60</output></label><input type="range" min="0" max="100" value="60" data-dial="--hd-grain" data-module="hand-drawn"></div>
+        <div class="mod-dial"><label><span class="dial-name">Rotation</span><output data-readout="--hd-rotation">45</output></label><input type="range" min="0" max="100" value="45" data-dial="--hd-rotation" data-module="hand-drawn"></div>
+        <div class="mod-dial"><label><span class="dial-name">Boil Speed</span><output data-readout="--hd-boil-speed">50</output></label><input type="range" min="0" max="100" value="50" data-dial="--hd-boil-speed" data-module="hand-drawn"></div>
+        <div class="mod-dial"><label><span class="dial-name">Sketchiness</span><output data-readout="--hd-sketchiness">50</output></label><input type="range" min="0" max="100" value="50" data-dial="--hd-sketchiness" data-module="hand-drawn"></div>
+        <div class="mod-dial"><label><span class="dial-name">Line Weight</span><output data-readout="--hd-line-weight">50</output></label><input type="range" min="0" max="100" value="50" data-dial="--hd-line-weight" data-module="hand-drawn"></div>
+        <div class="mod-dial"><label><span class="dial-name">Overshoot</span><output data-readout="--hd-overshoot">45</output></label><input type="range" min="0" max="100" value="45" data-dial="--hd-overshoot" data-module="hand-drawn"></div>
+      </div>
     </div>
-  </div>
-
-  <div class="panel-section">
-    <h4>Macro Engine</h4>
-    <div class="macro">
-      <div class="dial"><label for="sdecay">DECAY (cross-module)<output id="outdecay" for="sdecay">0</output></label>
-      <input id="sdecay" type="range" min="0" max="100" value="0" aria-label="Macro: DECAY" oninput="setDecayMacro(this.value)"></div>
-      <p class="sub" style="margin:0">Drives grain, tint, warble, ghosting, and glitch dropout across media-decay + glitch from one knob.</p>
+    <div class="mod-panel" data-module="glitch" style="--mod-color:#00d4ff">
+      <div class="mod-header"><span class="mod-accent"></span><span class="mod-name">GLITCH</span><label class="mod-bypass" title="Bypass: zero all dials"><input type="checkbox" data-bypass="glitch"> BYP</label></div>
+      <div class="mod-dials">
+        <div class="mod-dial"><label><span class="dial-name">RGB Split</span><output data-readout="--gl-rgb-split">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--gl-rgb-split" data-module="glitch"></div>
+        <div class="mod-dial"><label><span class="dial-name">Jitter</span><output data-readout="--gl-jitter">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--gl-jitter" data-module="glitch"></div>
+        <div class="mod-dial"><label><span class="dial-name">Dropout</span><output data-readout="--gl-dropout">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--gl-dropout" data-module="glitch"></div>
+        <div class="mod-dial"><label><span class="dial-name">Block Shift</span><output data-readout="--gl-block-shift">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--gl-block-shift" data-module="glitch"></div>
+        <div class="mod-dial"><label><span class="dial-name">Scanlines</span><output data-readout="--gl-scanlines">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--gl-scanlines" data-module="glitch"></div>
+        <div class="mod-dial"><label><span class="dial-name">Static</span><output data-readout="--gl-static">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--gl-static" data-module="glitch"></div>
+        <div class="mod-dial"><label><span class="dial-name">Rate</span><output data-readout="--gl-rate">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--gl-rate" data-module="glitch"></div>
+      </div>
+    </div>
+    <div class="mod-panel" data-module="text-motion" style="--mod-color:#4ade80">
+      <div class="mod-header"><span class="mod-accent"></span><span class="mod-name">TEXT-MOTION</span><label class="mod-bypass" title="Bypass: zero all dials"><input type="checkbox" data-bypass="text-motion"> BYP</label></div>
+      <div class="mod-dials">
+        <div class="mod-dial"><label><span class="dial-name">Speed</span><output data-readout="--tm-speed">50</output></label><input type="range" min="0" max="100" value="50" data-dial="--tm-speed" data-module="text-motion"></div>
+        <div class="mod-dial"><label><span class="dial-name">Stagger</span><output data-readout="--tm-stagger">45</output></label><input type="range" min="0" max="100" value="45" data-dial="--tm-stagger" data-module="text-motion"></div>
+        <div class="mod-dial"><label><span class="dial-name">Randomness</span><output data-readout="--tm-randomness">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--tm-randomness" data-module="text-motion"></div>
+        <div class="mod-dial"><label><span class="dial-name">Scramble Pool</span><output data-readout="--tm-scramble-pool">30</output></label><input type="range" min="0" max="100" value="30" data-dial="--tm-scramble-pool" data-module="text-motion"></div>
+        <div class="mod-dial"><label><span class="dial-name">Overshoot</span><output data-readout="--tm-overshoot">40</output></label><input type="range" min="0" max="100" value="40" data-dial="--tm-overshoot" data-module="text-motion"></div>
+      </div>
+    </div>
+    <div class="mod-panel" data-module="media-decay" style="--mod-color:#f59e0b">
+      <div class="mod-header"><span class="mod-accent"></span><span class="mod-name">MEDIA-DECAY</span><label class="mod-bypass" title="Bypass: zero all dials"><input type="checkbox" data-bypass="media-decay"> BYP</label></div>
+      <div class="mod-dials">
+        <div class="mod-dial"><label><span class="dial-name">Grain</span><output data-readout="--md-grain">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--md-grain" data-module="media-decay"></div>
+        <div class="mod-dial"><label><span class="dial-name">Dust</span><output data-readout="--md-dust">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--md-dust" data-module="media-decay"></div>
+        <div class="mod-dial"><label><span class="dial-name">Warble</span><output data-readout="--md-warble">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--md-warble" data-module="media-decay"></div>
+        <div class="mod-dial"><label><span class="dial-name">Ghosting</span><output data-readout="--md-ghosting">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--md-ghosting" data-module="media-decay"></div>
+        <div class="mod-dial"><label><span class="dial-name">Tint</span><output data-readout="--md-tint">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--md-tint" data-module="media-decay"></div>
+        <div class="mod-dial"><label><span class="dial-name">Vignette</span><output data-readout="--md-vignette">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--md-vignette" data-module="media-decay"></div>
+        <div class="mod-dial"><label><span class="dial-name">Flutter</span><output data-readout="--md-flutter">0</output></label><input type="range" min="0" max="100" value="0" data-dial="--md-flutter" data-module="media-decay"></div>
+      </div>
     </div>
   </div>
+</section>
 
-  <p class="rmnote" id="rmnote">Motion respects <code>prefers-reduced-motion</code>. Toggle it in your OS to see boil, glitch stepping, and text reveals freeze.</p>
-</aside>
-
-<div class="wrap">
-  <header>
-    <h1 class="title hd-hand">The Hand-Drawn Module</h1>
-    <p class="tagline hd-body">Style Engine · Module 1. Every effect below is driven by a
-    <strong>0-100 dial</strong> (<code>--hd-*</code>). Drag the sliders on the right — nothing here
-    is hard-coded. A future macro layer will drive all of these dials at once.</p>
-  </header>
-
-  <section class="demo" id="s-wobble">
-    <span class="demo__label">01 · wobbly containers</span>
-    <h2 class="hd-body">border-radius that breathes</h2>
-    <p class="demo__note">Each box interpolates 8 seeded radii toward the classic
-    <code>255px 15px 225px 15px / 15px 225px 15px 255px</code> by the Wobble dial. No two identical.</p>
-    <div class="grid">
-      <div class="hd-box hd-body"><strong>Ticket #1</strong><br>A wobbly ink container.</div>
-      <div class="hd-box hd-body" style="--hdr1:180;--hdr2:30;--hdr3:255;--hdr4:22;--hdr5:40;--hdr6:200;--hdr7:26;--hdr8:210;"><strong>Ticket #2</strong><br>Different seed set.</div>
-      <div class="hd-box hd-body" style="--hdr1:60;--hdr2:200;--hdr3:90;--hdr4:175;--hdr5:210;--hdr6:55;--hdr7:190;--hdr8:70;"><strong>Ticket #3</strong><br>Different again.</div>
-      <div class="hd-box hd-body"><strong>Ticket #4</strong><br>nth-of-type varies it.</div>
+<section class="dash-section" id="macros">
+  <h2 class="dash-section-title">Macro Rack</h2>
+  <div class="macro-rack">
+    <div class="macro-slot" data-slot="0">
+      <div class="macro-header"><input type="text" class="macro-name" placeholder="Macro 1" data-macro-name="0"><div class="macro-slider-row"><input type="range" min="0" max="100" value="0" class="macro-value" data-macro-slider="0"><output class="macro-readout" data-macro-readout="0">0</output></div><button class="macro-add-btn" data-macro-add="0">+ Map</button></div>
+      <div class="macro-mappings" data-macro-mappings="0"></div>
     </div>
-  </section>
-
-  <section class="demo" id="s-scatter">
-    <span class="demo__label">02 · scatter</span>
-    <h2 class="hd-body">prime-cadence rotation (3n / 5n / 7n)</h2>
-    <p class="demo__note">Rotations step on primes so they never land on a grid; magnitude +-2-5 deg from the Rotation dial.</p>
-    <div class="grid hd-scatter">
-      <div class="chip hd-body">tag 1</div><div class="chip hd-body">tag 2</div><div class="chip hd-body">tag 3</div><div class="chip hd-body">tag 4</div><div class="chip hd-body">tag 5</div><div class="chip hd-body">tag 6</div><div class="chip hd-body">tag 7</div><div class="chip hd-body">tag 8</div><div class="chip hd-body">tag 9</div><div class="chip hd-body">tag 10</div><div class="chip hd-body">tag 11</div><div class="chip hd-body">tag 12</div>
+    <div class="macro-slot" data-slot="1">
+      <div class="macro-header"><input type="text" class="macro-name" placeholder="Macro 2" data-macro-name="1"><div class="macro-slider-row"><input type="range" min="0" max="100" value="0" class="macro-value" data-macro-slider="1"><output class="macro-readout" data-macro-readout="1">0</output></div><button class="macro-add-btn" data-macro-add="1">+ Map</button></div>
+      <div class="macro-mappings" data-macro-mappings="1"></div>
     </div>
-  </section>
-
-  <section class="demo" id="s-roughen">
-    <span class="demo__label">03 · roughen filter</span>
-    <h2 class="hd-body">feTurbulence + feDisplacementMap</h2>
-    <p class="demo__note">Displacement <code>scale</code> is an SVG attribute CSS can't set — the JS binder writes it from the Sketchiness dial.</p>
-    <div class="grid">
-      <div class="sample-fill hd-roughen">roughened block — edges displaced</div>
-      <div class="hd-box hd-roughen hd-body">roughen on a wobbly box, stacked</div>
+    <div class="macro-slot" data-slot="2">
+      <div class="macro-header"><input type="text" class="macro-name" placeholder="Macro 3" data-macro-name="2"><div class="macro-slider-row"><input type="range" min="0" max="100" value="0" class="macro-value" data-macro-slider="2"><output class="macro-readout" data-macro-readout="2">0</output></div><button class="macro-add-btn" data-macro-add="2">+ Map</button></div>
+      <div class="macro-mappings" data-macro-mappings="2"></div>
     </div>
-  </section>
-
-  <section class="demo" id="s-boil">
-    <span class="demo__label">04 · boil animation</span>
-    <h2 class="hd-body">discrete baseFrequency stepping</h2>
-    <p class="demo__note"><code>calcMode="discrete"</code> is mandatory — it jumps between frames like redrawing by hand. Boil-speed dial writes <code>dur</code>. Frozen under reduced-motion.</p>
-    <div class="grid">
-      <div class="sample-fill hd-boil">boiling block</div>
-      <h2 class="hd-hand hd-boil" style="font-size:2.4rem;color:var(--hd-accent2)">Boiling headline</h2>
+    <div class="macro-slot" data-slot="3">
+      <div class="macro-header"><input type="text" class="macro-name" placeholder="Macro 4" data-macro-name="3"><div class="macro-slider-row"><input type="range" min="0" max="100" value="0" class="macro-value" data-macro-slider="3"><output class="macro-readout" data-macro-readout="3">0</output></div><button class="macro-add-btn" data-macro-add="3">+ Map</button></div>
+      <div class="macro-mappings" data-macro-mappings="3"></div>
     </div>
-  </section>
-
-  <section class="demo" id="s-grain">
-    <span class="demo__label">05 · grain</span>
-    <h2 class="hd-body">fractalNoise paper overlay</h2>
-    <p class="demo__note">A fixed full-page grain overlay at 5-15% opacity (Grain dial), multiply-blended over cream paper. Turn Grain up to see it bite.</p>
-    <div class="sample-fill hd-body" style="color:var(--hd-paper)">The grain sits above everything as a multiply overlay. Raise the Grain dial.</div>
-  </section>
-
-  <section class="demo" id="s-draw">
-    <span class="demo__label">06 · self-drawing lines</span>
-    <h2 class="hd-body">stroke-dashoffset + getTotalLength()</h2>
-    <p class="demo__note">Path length measured with <code>getTotalLength()</code>; the line draws itself. Duration from the Boil-speed dial. Instant under reduced-motion.</p>
-    <svg viewBox="0 0 600 120" width="100%" height="120" aria-hidden="true">
-      <path class="hd-draw-path" d="M10,90 C120,10 220,140 320,60 S520,10 590,80"/>
-    </svg>
-    <button class="btn" onclick="StyleEngine.drawLines('.hd-draw-path')">replay draw</button>
-  </section>
-
-  <section class="demo" id="s-rough">
-    <span class="demo__label">07 · Rough.js shapes</span>
-    <h2 class="hd-body">seeded sketchy shapes</h2>
-    <p class="demo__note">Rough.js with <code>roughness</code> from the Sketchiness dial, <code>bowing</code>, and a STABLE-per-element seed (stable on reflow, different between shapes). Re-render on dial change.</p>
-    <canvas id="roughcanvas" width="1000" height="260"></canvas>
-  </section>
-
-  <section class="demo" id="s-note">
-    <span class="demo__label">08 · rough-notation</span>
-    <h2 class="hd-body">annotations, used <span id="note-underline">sparingly</span></h2>
-    <p class="demo__note hd-body">Reserve 3-5 per page for the words that matter most: a
-    <span id="note-circle">deadline</span>, a <span id="note-highlight">key number</span>, a
-    <span id="note-box">warning</span>. Over-use and the eye stops trusting them.</p>
-    <button class="btn" onclick="runNotations()">replay annotations</button>
-  </section>
-
-  <section class="demo" id="s-riso">
-    <span class="demo__label">09 · risograph poster (composed)</span>
-    <h2 class="hd-body">flat inks · multiply · misregistration · halftone</h2>
-    <p class="demo__note">2-3 flat inks, each on a multiply layer, offset 1-3px (Sketchiness dial) so overlaps mix and edges misregister. Halftone dot grid underneath.</p>
-    <div class="hd-riso" style="position:relative;height:420px;border:1px solid var(--hd-ink);overflow:hidden;background:var(--hd-paper)">
-      <div class="hd-halftone" style="position:absolute;inset:0;opacity:.25"></div>
-      <div class="hd-riso__layer hd-riso__layer--yellow" style="display:flex;align-items:center;justify-content:center">
-        <div style="font:800 clamp(3rem,12vw,7rem)/0.9 'Caveat',cursive;text-align:center">NIGHT<br>PRESS</div>
-      </div>
-      <div class="hd-riso__layer hd-riso__layer--blue" style="display:flex;align-items:center;justify-content:center">
-        <div style="font:800 clamp(3rem,12vw,7rem)/0.9 'Caveat',cursive;text-align:center">NIGHT<br>PRESS</div>
-      </div>
-      <div class="hd-riso__layer hd-riso__layer--red" style="display:flex;align-items:flex-end;justify-content:center;padding-bottom:1.5rem">
-        <div class="hd-body" style="font-weight:700;letter-spacing:.3em">RISO ZINE FAIR — SAT 8PM</div>
-      </div>
+    <div class="macro-slot" data-slot="4">
+      <div class="macro-header"><input type="text" class="macro-name" placeholder="Macro 5" data-macro-name="4"><div class="macro-slider-row"><input type="range" min="0" max="100" value="0" class="macro-value" data-macro-slider="4"><output class="macro-readout" data-macro-readout="4">0</output></div><button class="macro-add-btn" data-macro-add="4">+ Map</button></div>
+      <div class="macro-mappings" data-macro-mappings="4"></div>
     </div>
-  </section>
-
-  <footer class="hd-body" style="opacity:.6;font-size:.85rem;border-top:1px dashed var(--hd-ink);padding-top:1rem">
-    Style Engine · Module 1 · Hand-Drawn. Built to prove the dial architecture. Next modules
-    (glitch <code>--gl-*</code>, text-motion <code>--tm-*</code>, media-decay <code>--md-*</code>) reuse the same 0-100 convention.
-  </footer>
-
-  <!-- ================================================================== -->
-  <!--  MODULE 2: GLITCH                                                   -->
-  <!-- ================================================================== -->
-  <hr class="module-sep">
-  <header>
-    <h1 class="title" style="font-family:monospace;color:#0f0;text-shadow:2px 0 #f00,-2px 0 #0ff">The Glitch Module</h1>
-    <p class="tagline hd-body">Style Engine · Module 2. Digital breakage driven by seven
-    <code>--gl-*</code> dials. RGB splits, jitter, dropouts, block shifts, scanlines, static noise,
-    and a rate clock. Everything is stepped (no smooth easing) — true digital corruption.</p>
-  </header>
-
-  <section class="demo" id="s-glitch-composite">
-    <span class="demo__label">10 · composite glitch target</span>
-    <h2 class="hd-body">all seven effects at once</h2>
-    <p class="demo__note">The <code>.gl-target</code> class applies every glitch effect: RGB split, jitter, dropout,
-    block shift, scanlines, and static noise. Turn up the Rate dial first, then adjust the others.</p>
-    <div class="grid" style="grid-template-columns:1fr 1fr">
-      <div>
-        <h3 class="glitch-heading gl-target" data-gl-text="SIGNAL LOST" style="margin:0 0 .5rem">SIGNAL LOST</h3>
-        <div class="glitch-photo-placeholder gl-target">
-          <svg viewBox="0 0 200 120" width="200" height="120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <rect width="200" height="120" fill="none"/>
-            <circle cx="60" cy="50" r="20" fill="rgba(255,255,255,.15)"/>
-            <polygon points="20,110 80,40 140,80 200,30 200,120 0,120" fill="rgba(255,255,255,.1)"/>
-          </svg>
-        </div>
-      </div>
-      <div class="glitch-card gl-target" id="glitch-card">
-        <div style="font-size:1.4rem;font-weight:700;margin-bottom:.5rem">// CORRUPTED BLOCK</div>
-        <div style="opacity:.7">error: unexpected token at position 0x3F2A</div>
-        <div style="opacity:.5;margin-top:.5rem">stack trace truncated...</div>
-        <div style="margin-top:1rem">
-          <button class="btn" style="color:#0f0;border-color:#0f0" onclick="StyleEngine.glitch.burst(this.closest('.gl-target'), 500)">Burst!</button>
-        </div>
-      </div>
+    <div class="macro-slot" data-slot="5">
+      <div class="macro-header"><input type="text" class="macro-name" placeholder="Macro 6" data-macro-name="5"><div class="macro-slider-row"><input type="range" min="0" max="100" value="0" class="macro-value" data-macro-slider="5"><output class="macro-readout" data-macro-readout="5">0</output></div><button class="macro-add-btn" data-macro-add="5">+ Map</button></div>
+      <div class="macro-mappings" data-macro-mappings="5"></div>
     </div>
-    <p class="demo__note" style="margin-top:1rem">The <strong>Burst!</strong> button calls
-    <code>StyleEngine.glitch.burst(el, 500)</code> — it maxes every glitch dial on that element for 500ms,
-    then restores the prior state.</p>
-  </section>
-
-  <!-- ================================================================== -->
-  <!--  MODULE 3: TEXT-MOTION                                              -->
-  <!-- ================================================================== -->
-  <hr class="module-sep">
-  <header>
-    <h1 class="title hd-hand">The Text-Motion Module</h1>
-    <p class="tagline hd-body">Style Engine · Module 3. Six composable text reveals:
-    typewriter, scramble, staggered-rise, wipe, cascade-drop, and blur-in. Each is driven by
-    five <code>--tm-*</code> dials. Switch the reveal type in the panel and hit Replay.</p>
-  </header>
-
-  <section class="demo" id="s-text-motion">
-    <span class="demo__label">11 · text reveals</span>
-    <h2 class="hd-body">per-character animation from dials</h2>
-    <p class="demo__note">Each line below uses a different reveal type. Change the reveal type dropdown in the panel
-    to switch all lines at once, then click Replay to re-trigger them.</p>
-
-    <div class="tm-demo-text tm-target" data-tm="staggered-rise" id="tm-line-1">Every letter earns its place on the page.</div>
-    <div class="tm-sample tm-target" data-tm="scramble" id="tm-line-2">The scramble locks in one character at a time, slot-machine style.</div>
-    <div class="tm-sample tm-target" data-tm="typewriter" id="tm-line-3">Typewriter reveals with a blinking cursor trailing behind.</div>
-    <div class="tm-sample tm-target" data-tm="blur-in" id="tm-line-4">Blur-in fades from soft focus to sharp, letter by letter.</div>
-    <div class="tm-sample tm-target" data-tm="cascade-drop" id="tm-line-5">Cascade-drop: letters fall into position from above.</div>
-    <div class="tm-sample tm-target" data-tm="wipe" id="tm-line-6">Wipe reveals the entire line via clip-path.</div>
-
-    <div style="margin-top:1rem">
-      <button class="btn" onclick="replayTextMotion()">Replay</button>
+    <div class="macro-slot" data-slot="6">
+      <div class="macro-header"><input type="text" class="macro-name" placeholder="Macro 7" data-macro-name="6"><div class="macro-slider-row"><input type="range" min="0" max="100" value="0" class="macro-value" data-macro-slider="6"><output class="macro-readout" data-macro-readout="6">0</output></div><button class="macro-add-btn" data-macro-add="6">+ Map</button></div>
+      <div class="macro-mappings" data-macro-mappings="6"></div>
     </div>
-  </section>
-
-  <!-- ================================================================== -->
-  <!--  MODULE 4: MEDIA-DECAY                                             -->
-  <!-- ================================================================== -->
-  <hr class="module-sep">
-  <header>
-    <h1 class="title hd-hand">The Media-Decay Module</h1>
-    <p class="tagline hd-body">Style Engine · Module 4. Analog wear and degradation: film grain,
-    dust and scratches, tape warble, soft chroma ghosting, sun-faded tint, vignette darkening,
-    and projector flutter. Seven <code>--md-*</code> dials, plus named presets (VINYL, VHS, CASSETTE).</p>
-  </header>
-
-  <section class="demo" id="s-media-decay">
-    <span class="demo__label">12 · analog decay</span>
-    <h2 class="hd-body">progressive physical media wear</h2>
-    <p class="demo__note">The <code>.md-target</code> class applies all decay effects at once.
-    Try the preset buttons in the panel, or dial each effect individually.</p>
-
-    <div class="grid" style="grid-template-columns:1fr 1fr">
-      <div class="md-target md-photo-placeholder" id="md-photo">
-        <svg viewBox="0 0 400 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-          <defs>
-            <linearGradient id="md-sky" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#87CEEB"/>
-              <stop offset="60%" stop-color="#E0B0FF"/>
-              <stop offset="100%" stop-color="#FFD700"/>
-            </linearGradient>
-          </defs>
-          <rect width="400" height="200" fill="url(#md-sky)"/>
-          <circle cx="320" cy="60" r="30" fill="#FFD700" opacity=".8"/>
-          <rect x="0" y="140" width="400" height="60" fill="#2d5016"/>
-          <rect x="60" y="100" width="40" height="40" fill="#8B4513"/>
-          <polygon points="60,100 80,70 100,100" fill="#556B2F"/>
-          <rect x="250" y="110" width="50" height="30" fill="#8B4513"/>
-          <polygon points="250,110 275,85 300,110" fill="#556B2F"/>
-        </svg>
-      </div>
-      <div class="md-target md-text-block" id="md-text">
-        <h3 style="margin:0 0 .5rem">Faded Memories</h3>
-        <p style="margin:0;opacity:.85;font-size:.92rem">This text block degrades alongside the photo.
-        Film grain, dust specks, and warm tint build up as you raise the dials.
-        The ghosting effect duplicates the content as a soft, blurred, color-shifted layer behind it.</p>
-      </div>
+    <div class="macro-slot" data-slot="7">
+      <div class="macro-header"><input type="text" class="macro-name" placeholder="Macro 8" data-macro-name="7"><div class="macro-slider-row"><input type="range" min="0" max="100" value="0" class="macro-value" data-macro-slider="7"><output class="macro-readout" data-macro-readout="7">0</output></div><button class="macro-add-btn" data-macro-add="7">+ Map</button></div>
+      <div class="macro-mappings" data-macro-mappings="7"></div>
     </div>
+  </div>
+</section>
 
-    <div style="margin-top:1rem" class="btn-group">
-      <button class="btn" onclick="applyMdPreset('VINYL')">VINYL</button>
-      <button class="btn" onclick="applyMdPreset('VHS')">VHS</button>
-      <button class="btn" onclick="applyMdPreset('CASSETTE')">CASSETTE</button>
-      <button class="btn" onclick="applyMdPreset('CLEAN')">CLEAN</button>
+<section class="dash-section" id="presets">
+  <h2 class="dash-section-title">Presets</h2>
+  <div class="preset-bar">
+    <button class="preset-btn" onclick="loadPreset('DECAY')">DECAY</button>
+    <button class="preset-btn" onclick="loadPreset('VINYL')">VINYL</button>
+    <button class="preset-btn" onclick="loadPreset('VHS')">VHS</button>
+    <button class="preset-btn" onclick="loadPreset('CASSETTE')">CASSETTE</button>
+    <button class="preset-btn" onclick="loadPreset('HAND-MADE')">HAND-MADE</button>
+  </div>
+  <div class="preset-io">
+    <button class="io-btn" onclick="savePreset()">Save Preset</button>
+    <label class="io-btn io-label">Load Preset
+      <input type="file" accept=".json" onchange="loadPresetFile(this)" hidden>
+    </label>
+  </div>
+</section>
+
+<section class="dash-section" id="export">
+  <details class="export-panel">
+    <summary>Export</summary>
+    <div class="export-buttons">
+      <button class="io-btn" onclick="exportCSS()">Copy CSS</button>
+      <button class="io-btn" onclick="exportJSON()">Copy JSON</button>
+      <button class="io-btn" onclick="exportSnippet()">Copy Snippet</button>
     </div>
-  </section>
-
-  <!-- ================================================================== -->
-  <!--  THE MACRO ENGINE                                                   -->
-  <!-- ================================================================== -->
-  <hr class="module-sep">
-  <header>
-    <h1 class="title hd-hand">The Macro Engine</h1>
-    <p class="tagline hd-body">Style Engine · Routing Layer. A macro is one 0-100 knob that drives
-    many module dials at once — each with its own range, curve, and active window. Exactly like an
-    Ableton Live effect-rack macro knob. The DECAY macro below drives dials across media-decay
-    <em>and</em> glitch from a single slider.</p>
-  </header>
-
-  <section class="demo" id="s-macro">
-    <span class="demo__label">13 · the DECAY macro</span>
-    <h2 class="hd-body">one knob, progressive cross-module rot</h2>
-    <p class="demo__note">DECAY is a starter preset that ships with the macro engine. At low values
-    grain and tint creep in (media-decay). Mid-range brings warble. Past 50 ghosting fades in exponentially.
-    Above 70, glitch dropouts kick in. All from one slider.</p>
-
-    <div class="macro" style="max-width:500px">
-      <div class="dial"><label for="sdecay2">DECAY<output id="outdecay2" for="sdecay2">0</output></label>
-      <input id="sdecay2" type="range" min="0" max="100" value="0" aria-label="Macro: DECAY" oninput="setDecayMacro(this.value)"></div>
-    </div>
-
-    <p class="demo__note">The macro engine also supports <code>serialize()</code> / <code>load()</code>
-    for full preset snapshots (every dial across every module + every macro definition, as a versioned JSON object).
-    This is the <code>styleEnginePreset v1</code> format — save and restore your entire effect state.</p>
-  </section>
-
-  <footer class="hd-body" style="opacity:.6;font-size:.85rem;border-top:1px dashed var(--hd-ink);padding-top:1rem;margin-top:3rem">
-    Style Engine · four modules (hand-drawn, glitch, text-motion, media-decay) + macro engine.
-    Every effect is a 0-100 dial. Every module speaks the same <code>StyleEngine.setDial()</code> API.
-    One macro can drive dials across all of them.
-  </footer>
-</div>
+    <pre class="export-output" id="export-output"></pre>
+  </details>
+</section>
 
 
-<!-- ===== vendored libraries (inlined) ===== -->
+<!-- ===== VENDOR LIBRARIES (inlined) ===== -->
 <script>/* Rough.js v4.6.6 (MIT) */ var rough=function(){"use strict";function t(t,e,s){if(t&&t.length){const[n,o]=e,a=Math.PI/180*s,h=Math.cos(a),r=Math.sin(a);for(const e of t){const[t,s]=e;e[0]=(t-n)*h-(s-o)*r+n,e[1]=(t-n)*r+(s-o)*h+o}}}function e(t,e){return t[0]===e[0]&&t[1]===e[1]}function s(s,n,o,a=1){const h=o,r=Math.max(n,.1),i=s[0]&&s[0][0]&&"number"==typeof s[0][0]?[s]:s,c=[0,0];if(h)for(const e of i)t(e,c,h);const l=function(t,s,n){const o=[];for(const s of t){const t=[...s];e(t[0],t[t.length-1])||t.push([t[0][0],t[0][1]]),t.length>2&&o.push(t)}const a=[];s=Math.max(s,.1);const h=[];for(const t of o)for(let e=0;e<t.length-1;e++){const s=t[e],n=t[e+1];if(s[1]!==n[1]){const t=Math.min(s[1],n[1]);h.push({ymin:t,ymax:Math.max(s[1],n[1]),x:t===s[1]?s[0]:n[0],islope:(n[0]-s[0])/(n[1]-s[1])})}}if(h.sort(((t,e)=>t.ymin<e.ymin?-1:t.ymin>e.ymin?1:t.x<e.x?-1:t.x>e.x?1:t.ymax===e.ymax?0:(t.ymax-e.ymax)/Math.abs(t.ymax-e.ymax))),!h.length)return a;let r=[],i=h[0].ymin,c=0;for(;r.length||h.length;){if(h.length){let t=-1;for(let e=0;e<h.length&&!(h[e].ymin>i);e++)t=e;h.splice(0,t+1).forEach((t=>{r.push({s:i,edge:t})}))}if(r=r.filter((t=>!(t.edge.ymax<=i))),r.sort(((t,e)=>t.edge.x===e.edge.x?0:(t.edge.x-e.edge.x)/Math.abs(t.edge.x-e.edge.x))),(1!==n||c%s==0)&&r.length>1)for(let t=0;t<r.length;t+=2){const e=t+1;if(e>=r.length)break;const s=r[t].edge,n=r[e].edge;a.push([[Math.round(s.x),i],[Math.round(n.x),i]])}i+=n,r.forEach((t=>{t.edge.x=t.edge.x+n*t.edge.islope})),c++}return a}(i,r,a);if(h){for(const e of i)t(e,c,-h);!function(e,s,n){const o=[];e.forEach((t=>o.push(...t))),t(o,s,n)}(l,c,-h)}return l}function n(t,e){var n;const o=e.hachureAngle+90;let a=e.hachureGap;a<0&&(a=4*e.strokeWidth),a=Math.round(Math.max(a,.1));let h=1;return e.roughness>=1&&((null===(n=e.randomizer)||void 0===n?void 0:n.next())||Math.random())>.7&&(h=a),s(t,a,o,h||1)}class o{constructor(t){this.helper=t}fillPolygons(t,e){return this._fillPolygons(t,e)}_fillPolygons(t,e){const s=n(t,e);return{type:"fillSketch",ops:this.renderLines(s,e)}}renderLines(t,e){const s=[];for(const n of t)s.push(...this.helper.doubleLineOps(n[0][0],n[0][1],n[1][0],n[1][1],e));return s}}function a(t){const e=t[0],s=t[1];return Math.sqrt(Math.pow(e[0]-s[0],2)+Math.pow(e[1]-s[1],2))}class h extends o{fillPolygons(t,e){let s=e.hachureGap;s<0&&(s=4*e.strokeWidth),s=Math.max(s,.1);const o=n(t,Object.assign({},e,{hachureGap:s})),h=Math.PI/180*e.hachureAngle,r=[],i=.5*s*Math.cos(h),c=.5*s*Math.sin(h);for(const[t,e]of o)a([t,e])&&r.push([[t[0]-i,t[1]+c],[...e]],[[t[0]+i,t[1]-c],[...e]]);return{type:"fillSketch",ops:this.renderLines(r,e)}}}class r extends o{fillPolygons(t,e){const s=this._fillPolygons(t,e),n=Object.assign({},e,{hachureAngle:e.hachureAngle+90}),o=this._fillPolygons(t,n);return s.ops=s.ops.concat(o.ops),s}}class i{constructor(t){this.helper=t}fillPolygons(t,e){const s=n(t,e=Object.assign({},e,{hachureAngle:0}));return this.dotsOnLines(s,e)}dotsOnLines(t,e){const s=[];let n=e.hachureGap;n<0&&(n=4*e.strokeWidth),n=Math.max(n,.1);let o=e.fillWeight;o<0&&(o=e.strokeWidth/2);const h=n/4;for(const r of t){const t=a(r),i=t/n,c=Math.ceil(i)-1,l=t-c*n,u=(r[0][0]+r[1][0])/2-n/4,p=Math.min(r[0][1],r[1][1]);for(let t=0;t<c;t++){const a=p+l+t*n,r=u-h+2*Math.random()*h,i=a-h+2*Math.random()*h,c=this.helper.ellipse(r,i,o,o,e);s.push(...c.ops)}}return{type:"fillSketch",ops:s}}}class c{constructor(t){this.helper=t}fillPolygons(t,e){const s=n(t,e);return{type:"fillSketch",ops:this.dashedLine(s,e)}}dashedLine(t,e){const s=e.dashOffset<0?e.hachureGap<0?4*e.strokeWidth:e.hachureGap:e.dashOffset,n=e.dashGap<0?e.hachureGap<0?4*e.strokeWidth:e.hachureGap:e.dashGap,o=[];return t.forEach((t=>{const h=a(t),r=Math.floor(h/(s+n)),i=(h+n-r*(s+n))/2;let c=t[0],l=t[1];c[0]>l[0]&&(c=t[1],l=t[0]);const u=Math.atan((l[1]-c[1])/(l[0]-c[0]));for(let t=0;t<r;t++){const a=t*(s+n),h=a+s,r=[c[0]+a*Math.cos(u)+i*Math.cos(u),c[1]+a*Math.sin(u)+i*Math.sin(u)],l=[c[0]+h*Math.cos(u)+i*Math.cos(u),c[1]+h*Math.sin(u)+i*Math.sin(u)];o.push(...this.helper.doubleLineOps(r[0],r[1],l[0],l[1],e))}})),o}}class l{constructor(t){this.helper=t}fillPolygons(t,e){const s=e.hachureGap<0?4*e.strokeWidth:e.hachureGap,o=e.zigzagOffset<0?s:e.zigzagOffset,a=n(t,e=Object.assign({},e,{hachureGap:s+o}));return{type:"fillSketch",ops:this.zigzagLines(a,o,e)}}zigzagLines(t,e,s){const n=[];return t.forEach((t=>{const o=a(t),h=Math.round(o/(2*e));let r=t[0],i=t[1];r[0]>i[0]&&(r=t[1],i=t[0]);const c=Math.atan((i[1]-r[1])/(i[0]-r[0]));for(let t=0;t<h;t++){const o=2*t*e,a=2*(t+1)*e,h=Math.sqrt(2*Math.pow(e,2)),i=[r[0]+o*Math.cos(c),r[1]+o*Math.sin(c)],l=[r[0]+a*Math.cos(c),r[1]+a*Math.sin(c)],u=[i[0]+h*Math.cos(c+Math.PI/4),i[1]+h*Math.sin(c+Math.PI/4)];n.push(...this.helper.doubleLineOps(i[0],i[1],u[0],u[1],s),...this.helper.doubleLineOps(u[0],u[1],l[0],l[1],s))}})),n}}const u={};class p{constructor(t){this.seed=t}next(){return this.seed?(2**31-1&(this.seed=Math.imul(48271,this.seed)))/2**31:Math.random()}}const f=0,d=1,g=2,M={A:7,a:7,C:6,c:6,H:1,h:1,L:2,l:2,M:2,m:2,Q:4,q:4,S:4,s:4,T:2,t:2,V:1,v:1,Z:0,z:0};function k(t,e){return t.type===e}function b(t){const e=[],s=function(t){const e=new Array;for(;""!==t;)if(t.match(/^([ \t\r\n,]+)/))t=t.substr(RegExp.$1.length);else if(t.match(/^([aAcChHlLmMqQsStTvVzZ])/))e[e.length]={type:f,text:RegExp.$1},t=t.substr(RegExp.$1.length);else{if(!t.match(/^(([-+]?[0-9]+(\.[0-9]*)?|[-+]?\.[0-9]+)([eE][-+]?[0-9]+)?)/))return[];e[e.length]={type:d,text:`${parseFloat(RegExp.$1)}`},t=t.substr(RegExp.$1.length)}return e[e.length]={type:g,text:""},e}(t);let n="BOD",o=0,a=s[o];for(;!k(a,g);){let h=0;const r=[];if("BOD"===n){if("M"!==a.text&&"m"!==a.text)return b("M0,0"+t);o++,h=M[a.text],n=a.text}else k(a,d)?h=M[n]:(o++,h=M[a.text],n=a.text);if(!(o+h<s.length))throw new Error("Path data ended short");for(let t=o;t<o+h;t++){const e=s[t];if(!k(e,d))throw new Error("Param not a number: "+n+","+e.text);r[r.length]=+e.text}if("number"!=typeof M[n])throw new Error("Bad segment: "+n);{const t={key:n,data:r};e.push(t),o+=h,a=s[o],"M"===n&&(n="L"),"m"===n&&(n="l")}}return e}function y(t){let e=0,s=0,n=0,o=0;const a=[];for(const{key:h,data:r}of t)switch(h){case"M":a.push({key:"M",data:[...r]}),[e,s]=r,[n,o]=r;break;case"m":e+=r[0],s+=r[1],a.push({key:"M",data:[e,s]}),n=e,o=s;break;case"L":a.push({key:"L",data:[...r]}),[e,s]=r;break;case"l":e+=r[0],s+=r[1],a.push({key:"L",data:[e,s]});break;case"C":a.push({key:"C",data:[...r]}),e=r[4],s=r[5];break;case"c":{const t=r.map(((t,n)=>n%2?t+s:t+e));a.push({key:"C",data:t}),e=t[4],s=t[5];break}case"Q":a.push({key:"Q",data:[...r]}),e=r[2],s=r[3];break;case"q":{const t=r.map(((t,n)=>n%2?t+s:t+e));a.push({key:"Q",data:t}),e=t[2],s=t[3];break}case"A":a.push({key:"A",data:[...r]}),e=r[5],s=r[6];break;case"a":e+=r[5],s+=r[6],a.push({key:"A",data:[r[0],r[1],r[2],r[3],r[4],e,s]});break;case"H":a.push({key:"H",data:[...r]}),e=r[0];break;case"h":e+=r[0],a.push({key:"H",data:[e]});break;case"V":a.push({key:"V",data:[...r]}),s=r[0];break;case"v":s+=r[0],a.push({key:"V",data:[s]});break;case"S":a.push({key:"S",data:[...r]}),e=r[2],s=r[3];break;case"s":{const t=r.map(((t,n)=>n%2?t+s:t+e));a.push({key:"S",data:t}),e=t[2],s=t[3];break}case"T":a.push({key:"T",data:[...r]}),e=r[0],s=r[1];break;case"t":e+=r[0],s+=r[1],a.push({key:"T",data:[e,s]});break;case"Z":case"z":a.push({key:"Z",data:[]}),e=n,s=o}return a}function m(t){const e=[];let s="",n=0,o=0,a=0,h=0,r=0,i=0;for(const{key:c,data:l}of t){switch(c){case"M":e.push({key:"M",data:[...l]}),[n,o]=l,[a,h]=l;break;case"C":e.push({key:"C",data:[...l]}),n=l[4],o=l[5],r=l[2],i=l[3];break;case"L":e.push({key:"L",data:[...l]}),[n,o]=l;break;case"H":n=l[0],e.push({key:"L",data:[n,o]});break;case"V":o=l[0],e.push({key:"L",data:[n,o]});break;case"S":{let t=0,a=0;"C"===s||"S"===s?(t=n+(n-r),a=o+(o-i)):(t=n,a=o),e.push({key:"C",data:[t,a,...l]}),r=l[0],i=l[1],n=l[2],o=l[3];break}case"T":{const[t,a]=l;let h=0,c=0;"Q"===s||"T"===s?(h=n+(n-r),c=o+(o-i)):(h=n,c=o);const u=n+2*(h-n)/3,p=o+2*(c-o)/3,f=t+2*(h-t)/3,d=a+2*(c-a)/3;e.push({key:"C",data:[u,p,f,d,t,a]}),r=h,i=c,n=t,o=a;break}case"Q":{const[t,s,a,h]=l,c=n+2*(t-n)/3,u=o+2*(s-o)/3,p=a+2*(t-a)/3,f=h+2*(s-h)/3;e.push({key:"C",data:[c,u,p,f,a,h]}),r=t,i=s,n=a,o=h;break}case"A":{const t=Math.abs(l[0]),s=Math.abs(l[1]),a=l[2],h=l[3],r=l[4],i=l[5],c=l[6];if(0===t||0===s)e.push({key:"C",data:[n,o,i,c,i,c]}),n=i,o=c;else if(n!==i||o!==c){x(n,o,i,c,t,s,a,h,r).forEach((function(t){e.push({key:"C",data:t})})),n=i,o=c}break}case"Z":e.push({key:"Z",data:[]}),n=a,o=h}s=c}return e}function w(t,e,s){return[t*Math.cos(s)-e*Math.sin(s),t*Math.sin(s)+e*Math.cos(s)]}function x(t,e,s,n,o,a,h,r,i,c){const l=(u=h,Math.PI*u/180);var u;let p=[],f=0,d=0,g=0,M=0;if(c)[f,d,g,M]=c;else{[t,e]=w(t,e,-l),[s,n]=w(s,n,-l);const h=(t-s)/2,c=(e-n)/2;let u=h*h/(o*o)+c*c/(a*a);u>1&&(u=Math.sqrt(u),o*=u,a*=u);const p=o*o,k=a*a,b=p*k-p*c*c-k*h*h,y=p*c*c+k*h*h,m=(r===i?-1:1)*Math.sqrt(Math.abs(b/y));g=m*o*c/a+(t+s)/2,M=m*-a*h/o+(e+n)/2,f=Math.asin(parseFloat(((e-M)/a).toFixed(9))),d=Math.asin(parseFloat(((n-M)/a).toFixed(9))),t<g&&(f=Math.PI-f),s<g&&(d=Math.PI-d),f<0&&(f=2*Math.PI+f),d<0&&(d=2*Math.PI+d),i&&f>d&&(f-=2*Math.PI),!i&&d>f&&(d-=2*Math.PI)}let k=d-f;if(Math.abs(k)>120*Math.PI/180){const t=d,e=s,r=n;d=i&&d>f?f+120*Math.PI/180*1:f+120*Math.PI/180*-1,p=x(s=g+o*Math.cos(d),n=M+a*Math.sin(d),e,r,o,a,h,0,i,[d,t,g,M])}k=d-f;const b=Math.cos(f),y=Math.sin(f),m=Math.cos(d),P=Math.sin(d),v=Math.tan(k/4),S=4/3*o*v,O=4/3*a*v,L=[t,e],T=[t+S*y,e-O*b],D=[s+S*P,n-O*m],A=[s,n];if(T[0]=2*L[0]-T[0],T[1]=2*L[1]-T[1],c)return[T,D,A].concat(p);{p=[T,D,A].concat(p);const t=[];for(let e=0;e<p.length;e+=3){const s=w(p[e][0],p[e][1],l),n=w(p[e+1][0],p[e+1][1],l),o=w(p[e+2][0],p[e+2][1],l);t.push([s[0],s[1],n[0],n[1],o[0],o[1]])}return t}}const P={randOffset:function(t,e){return G(t,e)},randOffsetWithRange:function(t,e,s){return E(t,e,s)},ellipse:function(t,e,s,n,o){const a=T(s,n,o);return D(t,e,o,a).opset},doubleLineOps:function(t,e,s,n,o){return $(t,e,s,n,o,!0)}};function v(t,e,s,n,o){return{type:"path",ops:$(t,e,s,n,o)}}function S(t,e,s){const n=(t||[]).length;if(n>2){const o=[];for(let e=0;e<n-1;e++)o.push(...$(t[e][0],t[e][1],t[e+1][0],t[e+1][1],s));return e&&o.push(...$(t[n-1][0],t[n-1][1],t[0][0],t[0][1],s)),{type:"path",ops:o}}return 2===n?v(t[0][0],t[0][1],t[1][0],t[1][1],s):{type:"path",ops:[]}}function O(t,e,s,n,o){return function(t,e){return S(t,!0,e)}([[t,e],[t+s,e],[t+s,e+n],[t,e+n]],o)}function L(t,e){if(t.length){const s="number"==typeof t[0][0]?[t]:t,n=j(s[0],1*(1+.2*e.roughness),e),o=e.disableMultiStroke?[]:j(s[0],1.5*(1+.22*e.roughness),z(e));for(let t=1;t<s.length;t++){const a=s[t];if(a.length){const t=j(a,1*(1+.2*e.roughness),e),s=e.disableMultiStroke?[]:j(a,1.5*(1+.22*e.roughness),z(e));for(const e of t)"move"!==e.op&&n.push(e);for(const t of s)"move"!==t.op&&o.push(t)}}return{type:"path",ops:n.concat(o)}}return{type:"path",ops:[]}}function T(t,e,s){const n=Math.sqrt(2*Math.PI*Math.sqrt((Math.pow(t/2,2)+Math.pow(e/2,2))/2)),o=Math.ceil(Math.max(s.curveStepCount,s.curveStepCount/Math.sqrt(200)*n)),a=2*Math.PI/o;let h=Math.abs(t/2),r=Math.abs(e/2);const i=1-s.curveFitting;return h+=G(h*i,s),r+=G(r*i,s),{increment:a,rx:h,ry:r}}function D(t,e,s,n){const[o,a]=F(n.increment,t,e,n.rx,n.ry,1,n.increment*E(.1,E(.4,1,s),s),s);let h=q(o,null,s);if(!s.disableMultiStroke&&0!==s.roughness){const[o]=F(n.increment,t,e,n.rx,n.ry,1.5,0,s),a=q(o,null,s);h=h.concat(a)}return{estimatedPoints:a,opset:{type:"path",ops:h}}}function A(t,e,s,n,o,a,h,r,i){const c=t,l=e;let u=Math.abs(s/2),p=Math.abs(n/2);u+=G(.01*u,i),p+=G(.01*p,i);let f=o,d=a;for(;f<0;)f+=2*Math.PI,d+=2*Math.PI;d-f>2*Math.PI&&(f=0,d=2*Math.PI);const g=2*Math.PI/i.curveStepCount,M=Math.min(g/2,(d-f)/2),k=V(M,c,l,u,p,f,d,1,i);if(!i.disableMultiStroke){const t=V(M,c,l,u,p,f,d,1.5,i);k.push(...t)}return h&&(r?k.push(...$(c,l,c+u*Math.cos(f),l+p*Math.sin(f),i),...$(c,l,c+u*Math.cos(d),l+p*Math.sin(d),i)):k.push({op:"lineTo",data:[c,l]},{op:"lineTo",data:[c+u*Math.cos(f),l+p*Math.sin(f)]})),{type:"path",ops:k}}function _(t,e){const s=m(y(b(t))),n=[];let o=[0,0],a=[0,0];for(const{key:t,data:h}of s)switch(t){case"M":a=[h[0],h[1]],o=[h[0],h[1]];break;case"L":n.push(...$(a[0],a[1],h[0],h[1],e)),a=[h[0],h[1]];break;case"C":{const[t,s,o,r,i,c]=h;n.push(...Z(t,s,o,r,i,c,a,e)),a=[i,c];break}case"Z":n.push(...$(a[0],a[1],o[0],o[1],e)),a=[o[0],o[1]]}return{type:"path",ops:n}}function I(t,e){const s=[];for(const n of t)if(n.length){const t=e.maxRandomnessOffset||0,o=n.length;if(o>2){s.push({op:"move",data:[n[0][0]+G(t,e),n[0][1]+G(t,e)]});for(let a=1;a<o;a++)s.push({op:"lineTo",data:[n[a][0]+G(t,e),n[a][1]+G(t,e)]})}}return{type:"fillPath",ops:s}}function C(t,e){return function(t,e){let s=t.fillStyle||"hachure";if(!u[s])switch(s){case"zigzag":u[s]||(u[s]=new h(e));break;case"cross-hatch":u[s]||(u[s]=new r(e));break;case"dots":u[s]||(u[s]=new i(e));break;case"dashed":u[s]||(u[s]=new c(e));break;case"zigzag-line":u[s]||(u[s]=new l(e));break;default:s="hachure",u[s]||(u[s]=new o(e))}return u[s]}(e,P).fillPolygons(t,e)}function z(t){const e=Object.assign({},t);return e.randomizer=void 0,t.seed&&(e.seed=t.seed+1),e}function W(t){return t.randomizer||(t.randomizer=new p(t.seed||0)),t.randomizer.next()}function E(t,e,s,n=1){return s.roughness*n*(W(s)*(e-t)+t)}function G(t,e,s=1){return E(-t,t,e,s)}function $(t,e,s,n,o,a=!1){const h=a?o.disableMultiStrokeFill:o.disableMultiStroke,r=R(t,e,s,n,o,!0,!1);if(h)return r;const i=R(t,e,s,n,o,!0,!0);return r.concat(i)}function R(t,e,s,n,o,a,h){const r=Math.pow(t-s,2)+Math.pow(e-n,2),i=Math.sqrt(r);let c=1;c=i<200?1:i>500?.4:-.0016668*i+1.233334;let l=o.maxRandomnessOffset||0;l*l*100>r&&(l=i/10);const u=l/2,p=.2+.2*W(o);let f=o.bowing*o.maxRandomnessOffset*(n-e)/200,d=o.bowing*o.maxRandomnessOffset*(t-s)/200;f=G(f,o,c),d=G(d,o,c);const g=[],M=()=>G(u,o,c),k=()=>G(l,o,c),b=o.preserveVertices;return a&&(h?g.push({op:"move",data:[t+(b?0:M()),e+(b?0:M())]}):g.push({op:"move",data:[t+(b?0:G(l,o,c)),e+(b?0:G(l,o,c))]})),h?g.push({op:"bcurveTo",data:[f+t+(s-t)*p+M(),d+e+(n-e)*p+M(),f+t+2*(s-t)*p+M(),d+e+2*(n-e)*p+M(),s+(b?0:M()),n+(b?0:M())]}):g.push({op:"bcurveTo",data:[f+t+(s-t)*p+k(),d+e+(n-e)*p+k(),f+t+2*(s-t)*p+k(),d+e+2*(n-e)*p+k(),s+(b?0:k()),n+(b?0:k())]}),g}function j(t,e,s){if(!t.length)return[];const n=[];n.push([t[0][0]+G(e,s),t[0][1]+G(e,s)]),n.push([t[0][0]+G(e,s),t[0][1]+G(e,s)]);for(let o=1;o<t.length;o++)n.push([t[o][0]+G(e,s),t[o][1]+G(e,s)]),o===t.length-1&&n.push([t[o][0]+G(e,s),t[o][1]+G(e,s)]);return q(n,null,s)}function q(t,e,s){const n=t.length,o=[];if(n>3){const a=[],h=1-s.curveTightness;o.push({op:"move",data:[t[1][0],t[1][1]]});for(let e=1;e+2<n;e++){const s=t[e];a[0]=[s[0],s[1]],a[1]=[s[0]+(h*t[e+1][0]-h*t[e-1][0])/6,s[1]+(h*t[e+1][1]-h*t[e-1][1])/6],a[2]=[t[e+1][0]+(h*t[e][0]-h*t[e+2][0])/6,t[e+1][1]+(h*t[e][1]-h*t[e+2][1])/6],a[3]=[t[e+1][0],t[e+1][1]],o.push({op:"bcurveTo",data:[a[1][0],a[1][1],a[2][0],a[2][1],a[3][0],a[3][1]]})}if(e&&2===e.length){const t=s.maxRandomnessOffset;o.push({op:"lineTo",data:[e[0]+G(t,s),e[1]+G(t,s)]})}}else 3===n?(o.push({op:"move",data:[t[1][0],t[1][1]]}),o.push({op:"bcurveTo",data:[t[1][0],t[1][1],t[2][0],t[2][1],t[2][0],t[2][1]]})):2===n&&o.push(...R(t[0][0],t[0][1],t[1][0],t[1][1],s,!0,!0));return o}function F(t,e,s,n,o,a,h,r){const i=[],c=[];if(0===r.roughness){t/=4,c.push([e+n*Math.cos(-t),s+o*Math.sin(-t)]);for(let a=0;a<=2*Math.PI;a+=t){const t=[e+n*Math.cos(a),s+o*Math.sin(a)];i.push(t),c.push(t)}c.push([e+n*Math.cos(0),s+o*Math.sin(0)]),c.push([e+n*Math.cos(t),s+o*Math.sin(t)])}else{const l=G(.5,r)-Math.PI/2;c.push([G(a,r)+e+.9*n*Math.cos(l-t),G(a,r)+s+.9*o*Math.sin(l-t)]);const u=2*Math.PI+l-.01;for(let h=l;h<u;h+=t){const t=[G(a,r)+e+n*Math.cos(h),G(a,r)+s+o*Math.sin(h)];i.push(t),c.push(t)}c.push([G(a,r)+e+n*Math.cos(l+2*Math.PI+.5*h),G(a,r)+s+o*Math.sin(l+2*Math.PI+.5*h)]),c.push([G(a,r)+e+.98*n*Math.cos(l+h),G(a,r)+s+.98*o*Math.sin(l+h)]),c.push([G(a,r)+e+.9*n*Math.cos(l+.5*h),G(a,r)+s+.9*o*Math.sin(l+.5*h)])}return[c,i]}function V(t,e,s,n,o,a,h,r,i){const c=a+G(.1,i),l=[];l.push([G(r,i)+e+.9*n*Math.cos(c-t),G(r,i)+s+.9*o*Math.sin(c-t)]);for(let a=c;a<=h;a+=t)l.push([G(r,i)+e+n*Math.cos(a),G(r,i)+s+o*Math.sin(a)]);return l.push([e+n*Math.cos(h),s+o*Math.sin(h)]),l.push([e+n*Math.cos(h),s+o*Math.sin(h)]),q(l,null,i)}function Z(t,e,s,n,o,a,h,r){const i=[],c=[r.maxRandomnessOffset||1,(r.maxRandomnessOffset||1)+.3];let l=[0,0];const u=r.disableMultiStroke?1:2,p=r.preserveVertices;for(let f=0;f<u;f++)0===f?i.push({op:"move",data:[h[0],h[1]]}):i.push({op:"move",data:[h[0]+(p?0:G(c[0],r)),h[1]+(p?0:G(c[0],r))]}),l=p?[o,a]:[o+G(c[f],r),a+G(c[f],r)],i.push({op:"bcurveTo",data:[t+G(c[f],r),e+G(c[f],r),s+G(c[f],r),n+G(c[f],r),l[0],l[1]]});return i}function Q(t){return[...t]}function H(t,e=0){const s=t.length;if(s<3)throw new Error("A curve must have at least three points.");const n=[];if(3===s)n.push(Q(t[0]),Q(t[1]),Q(t[2]),Q(t[2]));else{const s=[];s.push(t[0],t[0]);for(let e=1;e<t.length;e++)s.push(t[e]),e===t.length-1&&s.push(t[e]);const o=[],a=1-e;n.push(Q(s[0]));for(let t=1;t+2<s.length;t++){const e=s[t];o[0]=[e[0],e[1]],o[1]=[e[0]+(a*s[t+1][0]-a*s[t-1][0])/6,e[1]+(a*s[t+1][1]-a*s[t-1][1])/6],o[2]=[s[t+1][0]+(a*s[t][0]-a*s[t+2][0])/6,s[t+1][1]+(a*s[t][1]-a*s[t+2][1])/6],o[3]=[s[t+1][0],s[t+1][1]],n.push(o[1],o[2],o[3])}}return n}function N(t,e){return Math.pow(t[0]-e[0],2)+Math.pow(t[1]-e[1],2)}function B(t,e,s){const n=N(e,s);if(0===n)return N(t,e);let o=((t[0]-e[0])*(s[0]-e[0])+(t[1]-e[1])*(s[1]-e[1]))/n;return o=Math.max(0,Math.min(1,o)),N(t,J(e,s,o))}function J(t,e,s){return[t[0]+(e[0]-t[0])*s,t[1]+(e[1]-t[1])*s]}function K(t,e,s,n){const o=n||[];if(function(t,e){const s=t[e+0],n=t[e+1],o=t[e+2],a=t[e+3];let h=3*n[0]-2*s[0]-a[0];h*=h;let r=3*n[1]-2*s[1]-a[1];r*=r;let i=3*o[0]-2*a[0]-s[0];i*=i;let c=3*o[1]-2*a[1]-s[1];return c*=c,h<i&&(h=i),r<c&&(r=c),h+r}(t,e)<s){const s=t[e+0];if(o.length){(a=o[o.length-1],h=s,Math.sqrt(N(a,h)))>1&&o.push(s)}else o.push(s);o.push(t[e+3])}else{const n=.5,a=t[e+0],h=t[e+1],r=t[e+2],i=t[e+3],c=J(a,h,n),l=J(h,r,n),u=J(r,i,n),p=J(c,l,n),f=J(l,u,n),d=J(p,f,n);K([a,c,p,d],0,s,o),K([d,f,u,i],0,s,o)}var a,h;return o}function U(t,e){return X(t,0,t.length,e)}function X(t,e,s,n,o){const a=o||[],h=t[e],r=t[s-1];let i=0,c=1;for(let n=e+1;n<s-1;++n){const e=B(t[n],h,r);e>i&&(i=e,c=n)}return Math.sqrt(i)>n?(X(t,e,c+1,n,a),X(t,c,s,n,a)):(a.length||a.push(h),a.push(r)),a}function Y(t,e=.15,s){const n=[],o=(t.length-1)/3;for(let s=0;s<o;s++){K(t,3*s,e,n)}return s&&s>0?X(n,0,n.length,s):n}const tt="none";class et{constructor(t){this.defaultOptions={maxRandomnessOffset:2,roughness:1,bowing:1,stroke:"#000",strokeWidth:1,curveTightness:0,curveFitting:.95,curveStepCount:9,fillStyle:"hachure",fillWeight:-1,hachureAngle:-41,hachureGap:-1,dashOffset:-1,dashGap:-1,zigzagOffset:-1,seed:0,disableMultiStroke:!1,disableMultiStrokeFill:!1,preserveVertices:!1,fillShapeRoughnessGain:.8},this.config=t||{},this.config.options&&(this.defaultOptions=this._o(this.config.options))}static newSeed(){return Math.floor(Math.random()*2**31)}_o(t){return t?Object.assign({},this.defaultOptions,t):this.defaultOptions}_d(t,e,s){return{shape:t,sets:e||[],options:s||this.defaultOptions}}line(t,e,s,n,o){const a=this._o(o);return this._d("line",[v(t,e,s,n,a)],a)}rectangle(t,e,s,n,o){const a=this._o(o),h=[],r=O(t,e,s,n,a);if(a.fill){const o=[[t,e],[t+s,e],[t+s,e+n],[t,e+n]];"solid"===a.fillStyle?h.push(I([o],a)):h.push(C([o],a))}return a.stroke!==tt&&h.push(r),this._d("rectangle",h,a)}ellipse(t,e,s,n,o){const a=this._o(o),h=[],r=T(s,n,a),i=D(t,e,a,r);if(a.fill)if("solid"===a.fillStyle){const s=D(t,e,a,r).opset;s.type="fillPath",h.push(s)}else h.push(C([i.estimatedPoints],a));return a.stroke!==tt&&h.push(i.opset),this._d("ellipse",h,a)}circle(t,e,s,n){const o=this.ellipse(t,e,s,s,n);return o.shape="circle",o}linearPath(t,e){const s=this._o(e);return this._d("linearPath",[S(t,!1,s)],s)}arc(t,e,s,n,o,a,h=!1,r){const i=this._o(r),c=[],l=A(t,e,s,n,o,a,h,!0,i);if(h&&i.fill)if("solid"===i.fillStyle){const h=Object.assign({},i);h.disableMultiStroke=!0;const r=A(t,e,s,n,o,a,!0,!1,h);r.type="fillPath",c.push(r)}else c.push(function(t,e,s,n,o,a,h){const r=t,i=e;let c=Math.abs(s/2),l=Math.abs(n/2);c+=G(.01*c,h),l+=G(.01*l,h);let u=o,p=a;for(;u<0;)u+=2*Math.PI,p+=2*Math.PI;p-u>2*Math.PI&&(u=0,p=2*Math.PI);const f=(p-u)/h.curveStepCount,d=[];for(let t=u;t<=p;t+=f)d.push([r+c*Math.cos(t),i+l*Math.sin(t)]);return d.push([r+c*Math.cos(p),i+l*Math.sin(p)]),d.push([r,i]),C([d],h)}(t,e,s,n,o,a,i));return i.stroke!==tt&&c.push(l),this._d("arc",c,i)}curve(t,e){const s=this._o(e),n=[],o=L(t,s);if(s.fill&&s.fill!==tt)if("solid"===s.fillStyle){const e=L(t,Object.assign(Object.assign({},s),{disableMultiStroke:!0,roughness:s.roughness?s.roughness+s.fillShapeRoughnessGain:0}));n.push({type:"fillPath",ops:this._mergedShape(e.ops)})}else{const e=[],o=t;if(o.length){const t="number"==typeof o[0][0]?[o]:o;for(const n of t)n.length<3?e.push(...n):3===n.length?e.push(...Y(H([n[0],n[0],n[1],n[2]]),10,(1+s.roughness)/2)):e.push(...Y(H(n),10,(1+s.roughness)/2))}e.length&&n.push(C([e],s))}return s.stroke!==tt&&n.push(o),this._d("curve",n,s)}polygon(t,e){const s=this._o(e),n=[],o=S(t,!0,s);return s.fill&&("solid"===s.fillStyle?n.push(I([t],s)):n.push(C([t],s))),s.stroke!==tt&&n.push(o),this._d("polygon",n,s)}path(t,e){const s=this._o(e),n=[];if(!t)return this._d("path",n,s);t=(t||"").replace(/\n/g," ").replace(/(-\s)/g,"-").replace("/(ss)/g"," ");const o=s.fill&&"transparent"!==s.fill&&s.fill!==tt,a=s.stroke!==tt,h=!!(s.simplification&&s.simplification<1),r=function(t,e,s){const n=m(y(b(t))),o=[];let a=[],h=[0,0],r=[];const i=()=>{r.length>=4&&a.push(...Y(r,e)),r=[]},c=()=>{i(),a.length&&(o.push(a),a=[])};for(const{key:t,data:e}of n)switch(t){case"M":c(),h=[e[0],e[1]],a.push(h);break;case"L":i(),a.push([e[0],e[1]]);break;case"C":if(!r.length){const t=a.length?a[a.length-1]:h;r.push([t[0],t[1]])}r.push([e[0],e[1]]),r.push([e[2],e[3]]),r.push([e[4],e[5]]);break;case"Z":i(),a.push([h[0],h[1]])}if(c(),!s)return o;const l=[];for(const t of o){const e=U(t,s);e.length&&l.push(e)}return l}(t,1,h?4-4*(s.simplification||1):(1+s.roughness)/2),i=_(t,s);if(o)if("solid"===s.fillStyle)if(1===r.length){const e=_(t,Object.assign(Object.assign({},s),{disableMultiStroke:!0,roughness:s.roughness?s.roughness+s.fillShapeRoughnessGain:0}));n.push({type:"fillPath",ops:this._mergedShape(e.ops)})}else n.push(I(r,s));else n.push(C(r,s));return a&&(h?r.forEach((t=>{n.push(S(t,!1,s))})):n.push(i)),this._d("path",n,s)}opsToPath(t,e){let s="";for(const n of t.ops){const t="number"==typeof e&&e>=0?n.data.map((t=>+t.toFixed(e))):n.data;switch(n.op){case"move":s+=`M${t[0]} ${t[1]} `;break;case"bcurveTo":s+=`C${t[0]} ${t[1]}, ${t[2]} ${t[3]}, ${t[4]} ${t[5]} `;break;case"lineTo":s+=`L${t[0]} ${t[1]} `}}return s.trim()}toPaths(t){const e=t.sets||[],s=t.options||this.defaultOptions,n=[];for(const t of e){let e=null;switch(t.type){case"path":e={d:this.opsToPath(t),stroke:s.stroke,strokeWidth:s.strokeWidth,fill:tt};break;case"fillPath":e={d:this.opsToPath(t),stroke:tt,strokeWidth:0,fill:s.fill||tt};break;case"fillSketch":e=this.fillSketch(t,s)}e&&n.push(e)}return n}fillSketch(t,e){let s=e.fillWeight;return s<0&&(s=e.strokeWidth/2),{d:this.opsToPath(t),stroke:e.fill||tt,strokeWidth:s,fill:tt}}_mergedShape(t){return t.filter(((t,e)=>0===e||"move"!==t.op))}}class st{constructor(t,e){this.canvas=t,this.ctx=this.canvas.getContext("2d"),this.gen=new et(e)}draw(t){const e=t.sets||[],s=t.options||this.getDefaultOptions(),n=this.ctx,o=t.options.fixedDecimalPlaceDigits;for(const a of e)switch(a.type){case"path":n.save(),n.strokeStyle="none"===s.stroke?"transparent":s.stroke,n.lineWidth=s.strokeWidth,s.strokeLineDash&&n.setLineDash(s.strokeLineDash),s.strokeLineDashOffset&&(n.lineDashOffset=s.strokeLineDashOffset),this._drawToContext(n,a,o),n.restore();break;case"fillPath":{n.save(),n.fillStyle=s.fill||"";const e="curve"===t.shape||"polygon"===t.shape||"path"===t.shape?"evenodd":"nonzero";this._drawToContext(n,a,o,e),n.restore();break}case"fillSketch":this.fillSketch(n,a,s)}}fillSketch(t,e,s){let n=s.fillWeight;n<0&&(n=s.strokeWidth/2),t.save(),s.fillLineDash&&t.setLineDash(s.fillLineDash),s.fillLineDashOffset&&(t.lineDashOffset=s.fillLineDashOffset),t.strokeStyle=s.fill||"",t.lineWidth=n,this._drawToContext(t,e,s.fixedDecimalPlaceDigits),t.restore()}_drawToContext(t,e,s,n="nonzero"){t.beginPath();for(const n of e.ops){const e="number"==typeof s&&s>=0?n.data.map((t=>+t.toFixed(s))):n.data;switch(n.op){case"move":t.moveTo(e[0],e[1]);break;case"bcurveTo":t.bezierCurveTo(e[0],e[1],e[2],e[3],e[4],e[5]);break;case"lineTo":t.lineTo(e[0],e[1])}}"fillPath"===e.type?t.fill(n):t.stroke()}get generator(){return this.gen}getDefaultOptions(){return this.gen.defaultOptions}line(t,e,s,n,o){const a=this.gen.line(t,e,s,n,o);return this.draw(a),a}rectangle(t,e,s,n,o){const a=this.gen.rectangle(t,e,s,n,o);return this.draw(a),a}ellipse(t,e,s,n,o){const a=this.gen.ellipse(t,e,s,n,o);return this.draw(a),a}circle(t,e,s,n){const o=this.gen.circle(t,e,s,n);return this.draw(o),o}linearPath(t,e){const s=this.gen.linearPath(t,e);return this.draw(s),s}polygon(t,e){const s=this.gen.polygon(t,e);return this.draw(s),s}arc(t,e,s,n,o,a,h=!1,r){const i=this.gen.arc(t,e,s,n,o,a,h,r);return this.draw(i),i}curve(t,e){const s=this.gen.curve(t,e);return this.draw(s),s}path(t,e){const s=this.gen.path(t,e);return this.draw(s),s}}const nt="http://www.w3.org/2000/svg";class ot{constructor(t,e){this.svg=t,this.gen=new et(e)}draw(t){const e=t.sets||[],s=t.options||this.getDefaultOptions(),n=this.svg.ownerDocument||window.document,o=n.createElementNS(nt,"g"),a=t.options.fixedDecimalPlaceDigits;for(const h of e){let e=null;switch(h.type){case"path":e=n.createElementNS(nt,"path"),e.setAttribute("d",this.opsToPath(h,a)),e.setAttribute("stroke",s.stroke),e.setAttribute("stroke-width",s.strokeWidth+""),e.setAttribute("fill","none"),s.strokeLineDash&&e.setAttribute("stroke-dasharray",s.strokeLineDash.join(" ").trim()),s.strokeLineDashOffset&&e.setAttribute("stroke-dashoffset",`${s.strokeLineDashOffset}`);break;case"fillPath":e=n.createElementNS(nt,"path"),e.setAttribute("d",this.opsToPath(h,a)),e.setAttribute("stroke","none"),e.setAttribute("stroke-width","0"),e.setAttribute("fill",s.fill||""),"curve"!==t.shape&&"polygon"!==t.shape||e.setAttribute("fill-rule","evenodd");break;case"fillSketch":e=this.fillSketch(n,h,s)}e&&o.appendChild(e)}return o}fillSketch(t,e,s){let n=s.fillWeight;n<0&&(n=s.strokeWidth/2);const o=t.createElementNS(nt,"path");return o.setAttribute("d",this.opsToPath(e,s.fixedDecimalPlaceDigits)),o.setAttribute("stroke",s.fill||""),o.setAttribute("stroke-width",n+""),o.setAttribute("fill","none"),s.fillLineDash&&o.setAttribute("stroke-dasharray",s.fillLineDash.join(" ").trim()),s.fillLineDashOffset&&o.setAttribute("stroke-dashoffset",`${s.fillLineDashOffset}`),o}get generator(){return this.gen}getDefaultOptions(){return this.gen.defaultOptions}opsToPath(t,e){return this.gen.opsToPath(t,e)}line(t,e,s,n,o){const a=this.gen.line(t,e,s,n,o);return this.draw(a)}rectangle(t,e,s,n,o){const a=this.gen.rectangle(t,e,s,n,o);return this.draw(a)}ellipse(t,e,s,n,o){const a=this.gen.ellipse(t,e,s,n,o);return this.draw(a)}circle(t,e,s,n){const o=this.gen.circle(t,e,s,n);return this.draw(o)}linearPath(t,e){const s=this.gen.linearPath(t,e);return this.draw(s)}polygon(t,e){const s=this.gen.polygon(t,e);return this.draw(s)}arc(t,e,s,n,o,a,h=!1,r){const i=this.gen.arc(t,e,s,n,o,a,h,r);return this.draw(i)}curve(t,e){const s=this.gen.curve(t,e);return this.draw(s)}path(t,e){const s=this.gen.path(t,e);return this.draw(s)}}return{canvas:(t,e)=>new st(t,e),svg:(t,e)=>new ot(t,e),generator:t=>new et(t),newSeed:()=>et.newSeed()}}();
 </script>
 <script>/* rough-notation v0.2.1 (MIT) */ var RoughNotation=function(t){"use strict";const e="http://www.w3.org/2000/svg";class s{constructor(t){this.seed=t}next(){return this.seed?(2**31-1&(this.seed=Math.imul(48271,this.seed)))/2**31:Math.random()}}function n(t,e,s,n,i){return{type:"path",ops:u(t,e,s,n,i)}}function i(t,e){return function(t,e,s){const i=(t||[]).length;if(i>2){const n=[];for(let e=0;e<i-1;e++)n.push(...u(t[e][0],t[e][1],t[e+1][0],t[e+1][1],s));return e&&n.push(...u(t[i-1][0],t[i-1][1],t[0][0],t[0][1],s)),{type:"path",ops:n}}return 2===i?n(t[0][0],t[0][1],t[1][0],t[1][1],s):{type:"path",ops:[]}}(t,!0,e)}function o(t,e,s,n,o){return i([[t,e],[t+s,e],[t+s,e+n],[t,e+n]],o)}function r(t,e,s,n,i){return function(t,e,s,n){const[i,o]=p(n.increment,t,e,n.rx,n.ry,1,n.increment*a(.1,a(.4,1,s),s),s);let r=f(i,null,s);if(!s.disableMultiStroke){const[i]=p(n.increment,t,e,n.rx,n.ry,1.5,0,s),o=f(i,null,s);r=r.concat(o)}return{estimatedPoints:o,opset:{type:"path",ops:r}}}(t,e,i,function(t,e,s){const n=Math.sqrt(2*Math.PI*Math.sqrt((Math.pow(t/2,2)+Math.pow(e/2,2))/2)),i=Math.max(s.curveStepCount,s.curveStepCount/Math.sqrt(200)*n),o=2*Math.PI/i;let r=Math.abs(t/2),h=Math.abs(e/2);const a=1-s.curveFitting;return r+=c(r*a,s),h+=c(h*a,s),{increment:o,rx:r,ry:h}}(s,n,i)).opset}function h(t){return t.randomizer||(t.randomizer=new s(t.seed||0)),t.randomizer.next()}function a(t,e,s,n=1){return s.roughness*n*(h(s)*(e-t)+t)}function c(t,e,s=1){return a(-t,t,e,s)}function u(t,e,s,n,i,o=!1){const r=o?i.disableMultiStrokeFill:i.disableMultiStroke,h=l(t,e,s,n,i,!0,!1);if(r)return h;const a=l(t,e,s,n,i,!0,!0);return h.concat(a)}function l(t,e,s,n,i,o,r){const a=Math.pow(t-s,2)+Math.pow(e-n,2),u=Math.sqrt(a);let l=1;l=u<200?1:u>500?.4:-.0016668*u+1.233334;let f=i.maxRandomnessOffset||0;f*f*100>a&&(f=u/10);const p=f/2,d=.2+.2*h(i);let g=i.bowing*i.maxRandomnessOffset*(n-e)/200,m=i.bowing*i.maxRandomnessOffset*(t-s)/200;g=c(g,i,l),m=c(m,i,l);const _=[],w=()=>c(p,i,l),v=()=>c(f,i,l);return o&&(r?_.push({op:"move",data:[t+w(),e+w()]}):_.push({op:"move",data:[t+c(f,i,l),e+c(f,i,l)]})),r?_.push({op:"bcurveTo",data:[g+t+(s-t)*d+w(),m+e+(n-e)*d+w(),g+t+2*(s-t)*d+w(),m+e+2*(n-e)*d+w(),s+w(),n+w()]}):_.push({op:"bcurveTo",data:[g+t+(s-t)*d+v(),m+e+(n-e)*d+v(),g+t+2*(s-t)*d+v(),m+e+2*(n-e)*d+v(),s+v(),n+v()]}),_}function f(t,e,s){const n=t.length,i=[];if(n>3){const o=[],r=1-s.curveTightness;i.push({op:"move",data:[t[1][0],t[1][1]]});for(let e=1;e+2<n;e++){const s=t[e];o[0]=[s[0],s[1]],o[1]=[s[0]+(r*t[e+1][0]-r*t[e-1][0])/6,s[1]+(r*t[e+1][1]-r*t[e-1][1])/6],o[2]=[t[e+1][0]+(r*t[e][0]-r*t[e+2][0])/6,t[e+1][1]+(r*t[e][1]-r*t[e+2][1])/6],o[3]=[t[e+1][0],t[e+1][1]],i.push({op:"bcurveTo",data:[o[1][0],o[1][1],o[2][0],o[2][1],o[3][0],o[3][1]]})}if(e&&2===e.length){const t=s.maxRandomnessOffset;i.push({op:"lineTo",data:[e[0]+c(t,s),e[1]+c(t,s)]})}}else 3===n?(i.push({op:"move",data:[t[1][0],t[1][1]]}),i.push({op:"bcurveTo",data:[t[1][0],t[1][1],t[2][0],t[2][1],t[2][0],t[2][1]]})):2===n&&i.push(...u(t[0][0],t[0][1],t[1][0],t[1][1],s));return i}function p(t,e,s,n,i,o,r,h){const a=[],u=[],l=c(.5,h)-Math.PI/2;u.push([c(o,h)+e+.9*n*Math.cos(l-t),c(o,h)+s+.9*i*Math.sin(l-t)]);for(let r=l;r<2*Math.PI+l-.01;r+=t){const t=[c(o,h)+e+n*Math.cos(r),c(o,h)+s+i*Math.sin(r)];a.push(t),u.push(t)}return u.push([c(o,h)+e+n*Math.cos(l+2*Math.PI+.5*r),c(o,h)+s+i*Math.sin(l+2*Math.PI+.5*r)]),u.push([c(o,h)+e+.98*n*Math.cos(l+r),c(o,h)+s+.98*i*Math.sin(l+r)]),u.push([c(o,h)+e+.9*n*Math.cos(l+.5*r),c(o,h)+s+.9*i*Math.sin(l+.5*r)]),[u,a]}const d={maxRandomnessOffset:2,roughness:1.5,bowing:1,stroke:"#000",strokeWidth:1.5,curveTightness:0,curveFitting:.95,curveStepCount:9,fillStyle:"hachure",fillWeight:-1,hachureAngle:-41,hachureGap:-1,dashOffset:-1,dashGap:-1,zigzagOffset:-1,seed:0,combineNestedSvgPaths:!1,disableMultiStroke:!1,disableMultiStrokeFill:!1},g=JSON.parse(JSON.stringify(d));g.disableMultiStroke=!0;const m=JSON.parse(JSON.stringify(d));m.roughness=3,m.disableMultiStroke=!0;class _{constructor(t,e){this._state="unattached",this._resizing=!1,this._animationGroupDelay=0,this._resizeListener=()=>{this._resizing||(this._resizing=!0,setTimeout(()=>{if(this._resizing=!1,"showing"===this._state){const t=this.computeSize();t&&this.hasRectChanged(t)&&this.show()}},400))},this._e=t,this._config=e,this.attach()}get config(){return this._config}attach(){if("unattached"===this._state&&this._e.parentElement){!function(){if(!window.__rough_notation_keyframe_styles){const t=window.__rough_notation_keyframe_styles=document.createElement("style");t.textContent="\n    @keyframes rough-notation-dash {\n      to {\n        stroke-dashoffset: 0;\n      }\n    }\n    ",document.head.appendChild(t)}}();const t=this._svg=document.createElementNS(e,"svg"),s=t.style;s.position="absolute",s.top="0",s.left="0",s.overflow="visible",s.pointerEvents="none",s.width="100px",s.height="100px";const n="highlight"===this._config.type;if(this._e.insertAdjacentElement(n?"beforebegin":"afterend",t),this._state="not-showing",n){const t=window.getComputedStyle(this._e).position;(!t||"static"===t)&&(this._e.style.position="relative")}this.attachListeners()}}detachListeners(){window.removeEventListener("resize",this._resizeListener),this._resizeObserver&&this._resizeObserver.unobserve(this._e)}attachListeners(){this.detachListeners(),window.addEventListener("resize",this._resizeListener,{passive:!0}),!this._resizeObserver&&"ResizeObserver"in window&&(this._resizeObserver=new window.ResizeObserver(t=>{for(const e of t){let t=!0;if(e.contentRect){const s=this.computeSizeWithBounds(e.contentRect);s&&!this.hasRectChanged(s)&&(t=!1)}t&&this._resizeListener()}})),this._resizeObserver&&this._resizeObserver.observe(this._e)}sameInteger(t,e){return Math.round(t)===Math.round(e)}hasRectChanged(t){return!this._lastSize||!t||!(this.sameInteger(t.x,this._lastSize.x)&&this.sameInteger(t.y,this._lastSize.y)&&this.sameInteger(t.w,this._lastSize.w)&&this.sameInteger(t.h,this._lastSize.h))}isShowing(){return"not-showing"!==this._state}show(){switch(this._state){case"unattached":break;case"showing":this.hide(),this.show();break;case"not-showing":this.attach(),this._svg&&this.render(this._svg)}}hide(){if(this._svg)for(;this._svg.lastChild;)this._svg.removeChild(this._svg.lastChild);this._state="not-showing"}remove(){this._svg&&this._svg.parentElement&&this._svg.parentElement.removeChild(this._svg),this._svg=void 0,this._state="unattached",this.detachListeners()}render(t){const s=this.computeSize();s&&(!function(t,s,i,h){const a=[];let c=i.strokeWidth||2;const u=0===i.padding?0:i.padding||5,l=void 0===i.animate||!!i.animate,f=i.iterations||2;switch(i.type){case"underline":{const t=s.y+s.h+u;for(let e=0;e<f;e++)e%2?a.push(n(s.x+s.w,t,s.x,t,g)):a.push(n(s.x,t,s.x+s.w,t,g));break}case"strike-through":{const t=s.y+s.h/2;for(let e=0;e<f;e++)e%2?a.push(n(s.x+s.w,t,s.x,t,g)):a.push(n(s.x,t,s.x+s.w,t,g));break}case"box":{const t=s.x-u,e=s.y-u,n=s.w+2*u,i=s.h+2*u;for(let s=0;s<f;s++)a.push(o(t,e,n,i,g));break}case"crossed-off":{const t=s.x,e=s.y,i=t+s.w,o=e+s.h;for(let s=0;s<f;s++)s%2?a.push(n(i,o,t,e,g)):a.push(n(t,e,i,o,g));for(let s=0;s<f;s++)s%2?a.push(n(t,o,i,e,g)):a.push(n(i,e,t,o,g));break}case"circle":{const t=2*u,e=s.w+2*t,n=s.h+2*t,i=s.x-t+e/2,o=s.y-t+n/2,h=Math.floor(f/2),c=f-2*h;for(let t=0;t<h;t++)a.push(r(i,o,e,n,d));for(let t=0;t<c;t++)a.push(r(i,o,e,n,g));break}case"highlight":{c=.95*s.h;const t=s.y+s.h/2;for(let e=0;e<f;e++)e%2?a.push(n(s.x+s.w,t,s.x,t,m)):a.push(n(s.x,t,s.x+s.w,t,m));break}}if(a.length){const s=function(t){const e=[];for(const s of t){let t="";for(const n of s.ops){const s=n.data;switch(n.op){case"move":t.trim()&&e.push(t.trim()),t=`M${s[0]} ${s[1]} `;break;case"bcurveTo":t+=`C${s[0]} ${s[1]}, ${s[2]} ${s[3]}, ${s[4]} ${s[5]} `;break;case"lineTo":t+=`L${s[0]} ${s[1]} `}}t.trim()&&e.push(t.trim())}return e}(a),n=[],o=[];let r=0;const u=0===i.animationDuration?0:i.animationDuration||800,f=(0===i.animationDelay?0:i.animationDelay||0)+(h||0);for(const h of s){const s=document.createElementNS(e,"path");if(s.setAttribute("d",h),s.setAttribute("fill","none"),s.setAttribute("stroke",i.color||"currentColor"),s.setAttribute("stroke-width",""+c),l){const t=s.getTotalLength();n.push(t),r+=t}t.appendChild(s),o.push(s)}if(l){let t=0;for(let e=0;e<o.length;e++){const s=o[e],i=n[e],h=r?u*(i/r):0,a=f+t,c=s.style;c.strokeDashoffset=""+i,c.strokeDasharray=""+i,c.animation=`rough-notation-dash ${h}ms ease-out ${a}ms forwards`,t+=h}}}}(t,s,this._config,this._animationGroupDelay),this._lastSize=s,this._state="showing")}computeSize(){return this.computeSizeWithBounds(this._e.getBoundingClientRect())}computeSizeWithBounds(t){if(this._svg){const e=this._svg.getBoundingClientRect(),s=t;return{x:(s.x||s.left)-(e.x||e.left),y:(s.y||s.top)-(e.y||e.top),w:s.width,h:s.height}}return null}}return t.annotate=function(t,e){return new _(t,e)},t.annotationGroup=function(t){let e=0;for(const s of t){const t=s;t._animationGroupDelay=e;e+=0===t.config.animationDuration?0:t.config.animationDuration||800}const s=[...t];return{show(){for(const t of s)t.show()},hide(){for(const t of s)t.hide()}}},t}({});
 </script>
-<!-- ===== CANONICAL MODULE BINDERS (inlined verbatim from modules/) ===== -->
-<!-- hand-drawn.js creates the StyleEngine registry; load it FIRST -->
-<script>/* ============================================================================
+
+<!-- ===== MODULE JS (inlined verbatim, load order matters) ===== -->
+<script>/* hand-drawn.js — creates StyleEngine registry */ /* ============================================================================
    STYLE ENGINE · JS BINDER (Module 1 · Hand-Drawn)
    ----------------------------------------------------------------------------
    WHY THIS EXISTS:
@@ -1408,7 +1348,7 @@ select.demo-select { font: inherit; font-size: .82rem; padding: .3rem .5rem; bor
   else init();
 })();
 </script>
-<script>/* ==========================================================================
+<script>/* glitch.js */ /* ==========================================================================
    Style Engine — GLITCH module binder
    - Registers with the SHARED StyleEngine registry (created by hand-drawn.js).
    - Does NOT redefine window.StyleEngine or the registry itself.
@@ -1707,7 +1647,7 @@ select.demo-select { font: inherit; font-size: .82rem; padding: .3rem .5rem; bor
   }
 })();
 </script>
-<script>/* ============================================================================
+<script>/* text-motion.js */ /* ============================================================================
    Style Engine — TEXT-MOTION MODULE (Reveal Library)
    JS-driven text reveals: typewriter, scramble, staggered-rise, wipe,
    cascade-drop, blur-in. Composable on any text element.
@@ -2098,7 +2038,7 @@ select.demo-select { font: inherit; font-size: .82rem; padding: .3rem .5rem; bor
   }
 })();
 </script>
-<script>/* =============================================================================
+<script>/* media-decay.js */ /* =============================================================================
    media-decay.js — Analog Wear binder for the Style Engine
    -----------------------------------------------------------------------------
    Responsibilities CSS can't cover:
@@ -2363,8 +2303,7 @@ select.demo-select { font: inherit; font-size: .82rem; padding: .3rem .5rem; bor
   }
 })();
 </script>
-<!-- macro.js must load LAST (after all modules register) -->
-<script>/*
+<script>/* macro.js — attaches StyleEngine.macro */ /*
  * Style Engine — Macro Engine (the routing layer)
  * ------------------------------------------------
  * A macro is a single 0-100 knob that drives many module dials at once,
@@ -2821,171 +2760,503 @@ select.demo-select { font: inherit; font-size: .82rem; padding: .3rem .5rem; bor
 
 })();
 </script>
-<!-- ===== demo controls ===== -->
+
+<!-- ===== DASHBOARD JS ===== -->
 <script>
-// setDial proxies to the module's public API and updates the readout.
-function setDial(name, value) {
-  StyleEngine.setDial(name, value);
-  var out = document.getElementById('out' + name);
-  if (out) out.textContent = value;
-  renderRough();
-}
+(function(){
+  'use strict';
 
-// MACRO: one 0-100 input mapped onto many dials (the future macro layer, in miniature).
-// Each mapping is (dialVar, curveFn) so a macro can be non-linear per target.
-var MACRO_MAP = [
-  ['--hd-wobble',      function (m) { return Math.round(m); }],
-  ['--hd-rotation',    function (m) { return Math.round(m * 0.9); }],
-  ['--hd-sketchiness', function (m) { return Math.round(m); }],
-  ['--hd-boil-speed',  function (m) { return Math.round(m * 0.8); }],
-  ['--hd-grain',       function (m) { return Math.round(m * 0.28); }],
-  ['--hd-line-weight', function (m) { return Math.round(m); }],
-  ['--hd-overshoot',   function (m) { return Math.round(m); }]
-];
-function setMacro(m) {
-  m = parseFloat(m);
-  document.getElementById('outmacro').textContent = Math.round(m);
-  MACRO_MAP.forEach(function (pair) {
-    var v = pair[1](m);
-    StyleEngine.setDial(pair[0], v);
-    // reflect on the individual slider + readout so users SEE one dial move many
-    var slider = document.querySelector('input[oninput*="' + pair[0] + '"]');
-    if (slider) slider.value = v;
-    var out = document.getElementById('out' + pair[0]);
-    if (out) out.textContent = v;
-  });
-  renderRough();
-}
-
-// Rough.js: seeded shapes, roughness from the sketchiness dial. Seeds are
-// STABLE per shape (index-based) so shapes don't twitch, but DIFFER between shapes.
-function renderRough() {
-  var cv = document.getElementById('roughcanvas');
-  if (!cv || typeof rough === 'undefined') return;
-  var ctx = cv.getContext('2d');
-  ctx.clearRect(0, 0, cv.width, cv.height);
-  var rc = rough.canvas(cv);
-  var sketch = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hd-sketchiness')) || 0;
-  var roughness = 1 + (sketch / 100) * 1.8;   // dial 0-100 -> roughness 1.0-2.8
-  var bowing = 0.5 + (sketch / 100) * 2;
-  var ink = getComputedStyle(document.documentElement).getPropertyValue('--hd-ink').trim();
-  var red = getComputedStyle(document.documentElement).getPropertyValue('--hd-accent').trim();
-  var blue = getComputedStyle(document.documentElement).getPropertyValue('--hd-accent2').trim();
-  var opt = function (i, stroke, fill) {
-    return { roughness: roughness, bowing: bowing, seed: 1000 + i * 137,
-             stroke: stroke, strokeWidth: 2, fill: fill, fillStyle: 'hachure', fillWeight: 1.5, hachureGap: 6 };
-  };
-  rc.rectangle(30, 30, 200, 190, opt(1, ink, red));
-  rc.circle(360, 130, 180, opt(2, ink, blue));
-  rc.ellipse(620, 130, 240, 150, opt(3, red, null));
-  rc.line(770, 30, 970, 220, opt(4, blue));
-  rc.path('M780,210 C820,120 900,120 950,40', opt(5, ink, null));
-}
-
-// rough-notation: 3-5 annotations MAX. Skip animation under reduced motion.
-var _annotations = [];
-function runNotations() {
-  if (typeof RoughNotation === 'undefined') return;
-  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var red = getComputedStyle(document.documentElement).getPropertyValue('--hd-accent').trim();
-  var blue = getComputedStyle(document.documentElement).getPropertyValue('--hd-accent2').trim();
-  var yellow = getComputedStyle(document.documentElement).getPropertyValue('--hd-accent3').trim();
-  _annotations.forEach(function (a) { a.hide(); });
-  var dur = reduce ? 0 : 800;
-  _annotations = [
-    RoughNotation.annotate(document.getElementById('note-underline'), { type: 'underline', color: red, animationDuration: dur }),
-    RoughNotation.annotate(document.getElementById('note-circle'), { type: 'circle', color: blue, padding: 6, animationDuration: dur }),
-    RoughNotation.annotate(document.getElementById('note-highlight'), { type: 'highlight', color: yellow, animationDuration: dur }),
-    RoughNotation.annotate(document.getElementById('note-box'), { type: 'box', color: red, animationDuration: dur })
+  /* ==== Module data (mirrors the Python MODULES) ==== */
+  var MODULES=[
+    {id:'hand-drawn',name:'HAND-DRAWN',color:'#b83c28',dials:[
+      {label:'Wobble',cssVar:'--hd-wobble',def:55},
+      {label:'Grain',cssVar:'--hd-grain',def:60},
+      {label:'Rotation',cssVar:'--hd-rotation',def:45},
+      {label:'Boil Speed',cssVar:'--hd-boil-speed',def:50},
+      {label:'Sketchiness',cssVar:'--hd-sketchiness',def:50},
+      {label:'Line Weight',cssVar:'--hd-line-weight',def:50},
+      {label:'Overshoot',cssVar:'--hd-overshoot',def:45}
+    ]},
+    {id:'glitch',name:'GLITCH',color:'#00d4ff',dials:[
+      {label:'RGB Split',cssVar:'--gl-rgb-split',def:0},
+      {label:'Jitter',cssVar:'--gl-jitter',def:0},
+      {label:'Dropout',cssVar:'--gl-dropout',def:0},
+      {label:'Block Shift',cssVar:'--gl-block-shift',def:0},
+      {label:'Scanlines',cssVar:'--gl-scanlines',def:0},
+      {label:'Static',cssVar:'--gl-static',def:0},
+      {label:'Rate',cssVar:'--gl-rate',def:0}
+    ]},
+    {id:'text-motion',name:'TEXT-MOTION',color:'#4ade80',dials:[
+      {label:'Speed',cssVar:'--tm-speed',def:50},
+      {label:'Stagger',cssVar:'--tm-stagger',def:45},
+      {label:'Randomness',cssVar:'--tm-randomness',def:0},
+      {label:'Scramble Pool',cssVar:'--tm-scramble-pool',def:30},
+      {label:'Overshoot',cssVar:'--tm-overshoot',def:40}
+    ]},
+    {id:'media-decay',name:'MEDIA-DECAY',color:'#f59e0b',dials:[
+      {label:'Grain',cssVar:'--md-grain',def:0},
+      {label:'Dust',cssVar:'--md-dust',def:0},
+      {label:'Warble',cssVar:'--md-warble',def:0},
+      {label:'Ghosting',cssVar:'--md-ghosting',def:0},
+      {label:'Tint',cssVar:'--md-tint',def:0},
+      {label:'Vignette',cssVar:'--md-vignette',def:0},
+      {label:'Flutter',cssVar:'--md-flutter',def:0}
+    ]}
   ];
-  var group = RoughNotation.annotationGroup(_annotations);
-  group.show();
-}
 
-// ---- Text-Motion controls ------------------------------------------------ //
-function switchRevealType(type) {
-  var lines = document.querySelectorAll('#s-text-motion .tm-target');
-  for (var i = 0; i < lines.length; i++) {
-    lines[i].setAttribute('data-tm', type);
+  /* ==== Dashboard-enhanced DECAY preset (drives 3+ modules) ====
+     The starter DECAY in macro.js drives media-decay + glitch (2 modules).
+     This dashboard variant adds hand-drawn mappings so DECAY visibly
+     drives sliders in media-decay, glitch, AND hand-drawn (3 modules). */
+  var DASHBOARD_PRESETS={
+    DECAY:{
+      styleEnginePreset:1,name:'DECAY',
+      description:'Cross-module decay: media-decay + glitch + hand-drawn from one knob.',
+      dials:{},
+      macros:[{
+        id:'decay-master',name:'DECAY',
+        description:'Progressive rot across three modules.',
+        value:0,
+        mappings:[
+          {cssVar:'--md-grain',      min:0,max:85,curve:'ease',  window:[0,40]},
+          {cssVar:'--md-tint',       min:0,max:70,curve:'linear',window:[20,60]},
+          {cssVar:'--md-warble',     min:0,max:65,curve:'ease',  window:[30,70]},
+          {cssVar:'--md-ghosting',   min:0,max:80,curve:'exp',   window:[50,90]},
+          {cssVar:'--gl-dropout',    min:0,max:60,curve:'exp',   window:[70,100]},
+          {cssVar:'--gl-static',     min:0,max:40,curve:'linear',window:[40,80]},
+          {cssVar:'--gl-rate',       min:0,max:50,curve:'linear',window:[30,70]},
+          {cssVar:'--hd-grain',      min:0,max:55,curve:'linear',window:[10,60]},
+          {cssVar:'--hd-sketchiness',min:0,max:45,curve:'ease',  window:[40,85]}
+        ]
+      }]
+    }
+  };
+
+  /* ==== Slider & readout registry ==== */
+  var ALL_SLIDERS={};   /* cssVar -> {slider, readout} */
+  var BYPASS_STATE={};  /* moduleId -> {bypassed, saved:{cssVar:val}} */
+
+  /* ==== Toast ==== */
+  var toastEl;
+  function toast(msg){
+    if(!toastEl){
+      toastEl=document.createElement('div');
+      toastEl.className='dash-toast';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent=msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastEl._t);
+    toastEl._t=setTimeout(function(){toastEl.classList.remove('show');},2200);
   }
-  replayTextMotion();
-}
 
-function replayTextMotion() {
-  var lines = document.querySelectorAll('#s-text-motion .tm-target');
-  for (var i = 0; i < lines.length; i++) {
-    var type = lines[i].getAttribute('data-tm') || 'staggered-rise';
-    StyleEngine.text.reveal(lines[i], type);
+  /* ==== Init sliders ==== */
+  function initSliders(){
+    var sliders=document.querySelectorAll('[data-dial]');
+    for(var i=0;i<sliders.length;i++){
+      var s=sliders[i];
+      var v=s.getAttribute('data-dial');
+      var r=document.querySelector('[data-readout="'+v+'"]');
+      ALL_SLIDERS[v]={slider:s,readout:r};
+      (function(cssVar,sl){
+        sl.addEventListener('input',function(){
+          StyleEngine.setDial(cssVar,this.value);
+          var entry=ALL_SLIDERS[cssVar];
+          if(entry&&entry.readout) entry.readout.textContent=Math.round(this.value);
+        });
+      })(v,s);
+    }
   }
-}
 
-// ---- Media-Decay preset buttons ------------------------------------------ //
-function applyMdPreset(name) {
-  StyleEngine.mediaDecay.applyPreset(name);
-  // Reflect the preset's dial values back onto the panel sliders + readouts.
-  var preset = StyleEngine.mediaDecay.presets[name];
-  if (!preset) return;
-  var dialNames = ['grain', 'dust', 'warble', 'ghosting', 'tint', 'vignette', 'flutter'];
-  dialNames.forEach(function (d) {
-    var v = preset[d];
-    var cssVar = '--md-' + d;
-    var slider = document.querySelector('input[oninput*="' + cssVar + '"]');
-    if (slider) slider.value = v;
-    var out = document.getElementById('out' + cssVar);
-    if (out) out.textContent = v;
+  /* ==== Update one slider's position + readout ==== */
+  function updateSliderUI(cssVar,value){
+    var entry=ALL_SLIDERS[cssVar];
+    if(!entry) return;
+    var r=Math.round(value);
+    entry.slider.value=r;
+    if(entry.readout) entry.readout.textContent=r;
+  }
+
+  /* ==== Sync ALL sliders to current computed CSS values ==== */
+  function syncAllSliders(){
+    var cs=getComputedStyle(document.documentElement);
+    var keys=Object.keys(ALL_SLIDERS);
+    for(var i=0;i<keys.length;i++){
+      var v=parseFloat(cs.getPropertyValue(keys[i]));
+      if(!isNaN(v)) updateSliderUI(keys[i],v);
+    }
+  }
+
+  /* ==== Module helpers ==== */
+  function getModuleDials(moduleId){
+    for(var i=0;i<MODULES.length;i++){
+      if(MODULES[i].id===moduleId) return MODULES[i].dials;
+    }
+    return [];
+  }
+  function findModuleForVar(cssVar){
+    for(var i=0;i<MODULES.length;i++){
+      for(var j=0;j<MODULES[i].dials.length;j++){
+        if(MODULES[i].dials[j].cssVar===cssVar) return MODULES[i];
+      }
+    }
+    return null;
+  }
+
+  /* ==== Bypass ==== */
+  function initBypass(){
+    var cbs=document.querySelectorAll('[data-bypass]');
+    for(var i=0;i<cbs.length;i++){
+      (function(cb){
+        var modId=cb.getAttribute('data-bypass');
+        BYPASS_STATE[modId]={bypassed:false,saved:{}};
+        cb.addEventListener('change',function(){
+          toggleBypass(modId,this.checked);
+        });
+      })(cbs[i]);
+    }
+  }
+  function toggleBypass(moduleId,bypassed){
+    var state=BYPASS_STATE[moduleId];
+    if(!state) return;
+    var dials=getModuleDials(moduleId);
+    var cs=getComputedStyle(document.documentElement);
+    if(bypassed){
+      state.saved={};
+      for(var i=0;i<dials.length;i++){
+        var v=parseFloat(cs.getPropertyValue(dials[i].cssVar));
+        state.saved[dials[i].cssVar]=isNaN(v)?dials[i].def:v;
+        StyleEngine.setDial(dials[i].cssVar,0);
+        updateSliderUI(dials[i].cssVar,0);
+      }
+      state.bypassed=true;
+    }else{
+      for(var j=0;j<dials.length;j++){
+        var saved=state.saved[dials[j].cssVar];
+        if(saved==null) saved=dials[j].def;
+        StyleEngine.setDial(dials[j].cssVar,saved);
+        updateSliderUI(dials[j].cssVar,saved);
+      }
+      state.bypassed=false;
+    }
+  }
+
+  /* ==== Macro helpers ==== */
+  function getMacroIdForSlot(idx){return 'dash-macro-'+idx;}
+
+  /* Rebuild a macro from its slot's current UI state */
+  function rebuildMacroFromSlot(idx){
+    var slotEl=document.querySelector('[data-slot="'+idx+'"]');
+    if(!slotEl) return;
+    var id=slotEl.getAttribute('data-loaded-macro-id')||getMacroIdForSlot(idx);
+    StyleEngine.macro.delete(id);
+
+    var nameInput=slotEl.querySelector('.macro-name');
+    var slider=slotEl.querySelector('.macro-value');
+    var rows=slotEl.querySelectorAll('.mapping-row');
+    if(rows.length===0){slotEl.removeAttribute('data-loaded-macro-id');return;}
+
+    var mappings=[];
+    for(var i=0;i<rows.length;i++){
+      var row=rows[i];
+      var dialSel=row.querySelector('.map-dial');
+      if(!dialSel||!dialSel.value) continue;
+      mappings.push({
+        cssVar:dialSel.value,
+        min:parseFloat(row.querySelector('.map-min').value)||0,
+        max:parseFloat(row.querySelector('.map-max').value)||100,
+        curve:row.querySelector('.map-curve').value||'linear',
+        window:[
+          parseFloat(row.querySelector('.map-win-start').value)||0,
+          parseFloat(row.querySelector('.map-win-end').value)||100
+        ]
+      });
+    }
+
+    StyleEngine.macro.create({
+      id:id,
+      name:nameInput.value||'Macro '+(idx+1),
+      value:parseFloat(slider.value)||0,
+      mappings:mappings
+    });
+    slotEl.setAttribute('data-loaded-macro-id',id);
+    StyleEngine.macro.setValue(id,parseFloat(slider.value)||0);
+    syncAllSliders();
+  }
+
+  /* Drive a macro from its slot slider */
+  function setMacroSlider(idx,value){
+    var slotEl=document.querySelector('[data-slot="'+idx+'"]');
+    if(!slotEl) return;
+    var readout=slotEl.querySelector('.macro-readout');
+    if(readout) readout.textContent=Math.round(value);
+
+    var id=slotEl.getAttribute('data-loaded-macro-id');
+    if(!id) return;
+    var mac=StyleEngine.macro.get(id);
+    if(mac){
+      StyleEngine.macro.setValue(id,value);
+      syncAllSliders();
+    }
+  }
+
+  /* Update dial <select> options when module <select> changes */
+  function updateDialOptions(moduleSelect){
+    var row=moduleSelect.closest('.mapping-row');
+    var dialSelect=row.querySelector('.map-dial');
+    var dials=getModuleDials(moduleSelect.value);
+    dialSelect.innerHTML='';
+    for(var i=0;i<dials.length;i++){
+      var opt=document.createElement('option');
+      opt.value=dials[i].cssVar;
+      opt.textContent=dials[i].label;
+      dialSelect.appendChild(opt);
+    }
+  }
+
+  /* Add a mapping row to a slot */
+  function addMappingRow(slotIdx,mapping){
+    mapping=mapping||{};
+    var container=document.querySelector('[data-macro-mappings="'+slotIdx+'"]');
+    if(!container) return;
+    var row=document.createElement('div');
+    row.className='mapping-row';
+
+    var modOpts='';
+    for(var i=0;i<MODULES.length;i++){
+      modOpts+='<option value="'+MODULES[i].id+'">'+MODULES[i].name+'</option>';
+    }
+    var curveOpts='<option value="linear">linear</option><option value="ease">ease</option><option value="exp">exp</option>';
+
+    var winStart=mapping.window?mapping.window[0]:0;
+    var winEnd=mapping.window?mapping.window[1]:100;
+    row.innerHTML=
+      '<select class="map-module">'+modOpts+'</select>'+
+      '<select class="map-dial"></select>'+
+      '<label>min<input type="number" class="map-min" min="0" max="100" value="'+(mapping.min!=null?mapping.min:0)+'"></label>'+
+      '<label>max<input type="number" class="map-max" min="0" max="100" value="'+(mapping.max!=null?mapping.max:100)+'"></label>'+
+      '<select class="map-curve">'+curveOpts+'</select>'+
+      '<label>w<input type="number" class="map-win-start" min="0" max="100" value="'+winStart+'"></label>'+
+      '<label>-<input type="number" class="map-win-end" min="0" max="100" value="'+winEnd+'"></label>'+
+      '<button class="map-remove">X</button>';
+
+    container.appendChild(row);
+
+    /* wire up module select */
+    var modSelect=row.querySelector('.map-module');
+    modSelect.addEventListener('change',function(){
+      updateDialOptions(this);
+      rebuildMacroFromSlot(slotIdx);
+    });
+
+    /* set initial module + dial */
+    if(mapping.cssVar){
+      var targetMod=findModuleForVar(mapping.cssVar);
+      if(targetMod) modSelect.value=targetMod.id;
+    }
+    updateDialOptions(modSelect);
+    if(mapping.cssVar){
+      row.querySelector('.map-dial').value=mapping.cssVar;
+    }
+    if(mapping.curve){
+      row.querySelector('.map-curve').value=mapping.curve;
+    }
+
+    /* remove button */
+    row.querySelector('.map-remove').addEventListener('click',function(){
+      row.remove();rebuildMacroFromSlot(slotIdx);
+    });
+
+    /* change listeners for rebuild */
+    var inputs=row.querySelectorAll('input[type=number],select.map-dial,select.map-curve');
+    for(var j=0;j<inputs.length;j++){
+      inputs[j].addEventListener('change',function(){rebuildMacroFromSlot(slotIdx);});
+    }
+  }
+
+  /* Clear a slot UI */
+  function clearSlotUI(idx){
+    var slotEl=document.querySelector('[data-slot="'+idx+'"]');
+    if(!slotEl) return;
+    slotEl.querySelector('.macro-name').value='';
+    slotEl.querySelector('.macro-value').value=0;
+    var rd=slotEl.querySelector('.macro-readout');
+    if(rd) rd.textContent='0';
+    var mp=slotEl.querySelector('[data-macro-mappings="'+idx+'"]');
+    if(mp) mp.innerHTML='';
+    slotEl.removeAttribute('data-loaded-macro-id');
+  }
+
+  /* Fill a slot from a macro API object */
+  function fillSlotUI(idx,mac){
+    var slotEl=document.querySelector('[data-slot="'+idx+'"]');
+    if(!slotEl||!mac) return;
+    slotEl.querySelector('.macro-name').value=mac.name||'';
+    slotEl.querySelector('.macro-value').value=mac.value||0;
+    var rd=slotEl.querySelector('.macro-readout');
+    if(rd) rd.textContent=Math.round(mac.value||0);
+    slotEl.setAttribute('data-loaded-macro-id',mac.id);
+    var mp=slotEl.querySelector('[data-macro-mappings="'+idx+'"]');
+    if(mp) mp.innerHTML='';
+    for(var i=0;i<mac.mappings.length;i++){
+      addMappingRow(idx,mac.mappings[i]);
+    }
+  }
+
+  /* Populate all slots from the macro API */
+  function populateMacroSlotsFromAPI(){
+    var ids=StyleEngine.macro.list();
+    for(var i=0;i<8;i++) clearSlotUI(i);
+    for(var j=0;j<ids.length&&j<8;j++){
+      var mac=StyleEngine.macro.get(ids[j]);
+      if(mac) fillSlotUI(j,mac);
+    }
+  }
+
+  /* ==== Preset functions (global for onclick) ==== */
+  window.loadPreset=function(name){
+    if(!StyleEngine.macro){toast('Macro engine not loaded');return;}
+    var preset;
+    if(DASHBOARD_PRESETS[name]){
+      preset=DASHBOARD_PRESETS[name];
+    }else if(StyleEngine.macro.starterPresets){
+      preset=StyleEngine.macro.starterPresets[name];
+    }
+    if(!preset){toast('Unknown preset: '+name);return;}
+    StyleEngine.macro.load(preset);
+    populateMacroSlotsFromAPI();
+    syncAllSliders();
+    toast('Loaded: '+name);
+  };
+
+  window.savePreset=function(){
+    if(!StyleEngine.macro) return;
+    var data=StyleEngine.macro.serialize();
+    var name=prompt('Preset name:',data.name||'My Preset');
+    if(!name) return;
+    data.name=name;
+    var json=JSON.stringify(data,null,2);
+    var blob=new Blob([json],{type:'application/json'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;
+    a.download=name.replace(/\s+/g,'-').toLowerCase()+'.json';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Saved: '+name);
+  };
+
+  window.loadPresetFile=function(input){
+    if(!input.files||!input.files[0]) return;
+    var reader=new FileReader();
+    reader.onload=function(e){
+      try{
+        var data=JSON.parse(e.target.result);
+        StyleEngine.macro.load(data);
+        populateMacroSlotsFromAPI();
+        syncAllSliders();
+        toast('Loaded preset from file');
+      }catch(err){
+        toast('Error: '+err.message);
+      }
+    };
+    reader.readAsText(input.files[0]);
+    input.value='';
+  };
+
+  /* ==== Export functions (global for onclick) ==== */
+  function copyAndShow(text){
+    var out=document.getElementById('export-output');
+    if(out){out.textContent=text;out.classList.add('visible');}
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(text).catch(function(){});
+    }
+    var details=document.querySelector('.export-panel');
+    if(details) details.open=true;
+  }
+
+  window.exportCSS=function(){
+    var cs=getComputedStyle(document.documentElement);
+    var lines=[':root {'];
+    var keys=Object.keys(ALL_SLIDERS);
+    for(var i=0;i<keys.length;i++){
+      var v=cs.getPropertyValue(keys[i]).trim();
+      if(v!=='') lines.push('  '+keys[i]+': '+v+';');
+    }
+    lines.push('}');
+    copyAndShow(lines.join('\n'));
+    toast('CSS copied to clipboard');
+  };
+
+  window.exportJSON=function(){
+    if(!StyleEngine.macro) return;
+    var data=StyleEngine.macro.serialize();
+    copyAndShow(JSON.stringify(data,null,2));
+    toast('JSON copied to clipboard');
+  };
+
+  window.exportSnippet=function(){
+    var cs=getComputedStyle(document.documentElement);
+    var keys=Object.keys(ALL_SLIDERS);
+    var cssLines=[];
+    for(var i=0;i<keys.length;i++){
+      var v=cs.getPropertyValue(keys[i]).trim();
+      if(v!==''&&v!=='0') cssLines.push('  '+keys[i]+': '+v+';');
+    }
+    var snippet=
+      '<style>\n:root {\n'+cssLines.join('\n')+'\n}\n<\/style>\n\n'+
+      '<!-- Style Engine modules -->\n'+
+      '<link rel="stylesheet" href="modules/hand-drawn.css">\n'+
+      '<link rel="stylesheet" href="modules/glitch.css">\n'+
+      '<link rel="stylesheet" href="modules/text-motion.css">\n'+
+      '<link rel="stylesheet" href="modules/media-decay.css">\n'+
+      '<script src="modules/hand-drawn.js"><\/script>\n'+
+      '<script src="modules/glitch.js"><\/script>\n'+
+      '<script src="modules/text-motion.js"><\/script>\n'+
+      '<script src="modules/media-decay.js"><\/script>\n'+
+      '<script src="modules/macro.js"><\/script>';
+    copyAndShow(snippet);
+    toast('Snippet copied to clipboard');
+  };
+
+  /* Replay text reveal from preview */
+  window.replayText=function(){
+    var el=document.querySelector('[data-tm]');
+    if(el&&StyleEngine.text&&StyleEngine.text.reveal){
+      StyleEngine.text.reveal(el);
+    }
+  };
+
+  /* ==== Init ==== */
+  function initMacroSlots(){
+    var sliders=document.querySelectorAll('[data-macro-slider]');
+    for(var i=0;i<sliders.length;i++){
+      (function(sl){
+        var idx=parseInt(sl.getAttribute('data-macro-slider'),10);
+        sl.addEventListener('input',function(){
+          setMacroSlider(idx,parseFloat(this.value));
+        });
+      })(sliders[i]);
+    }
+    var addBtns=document.querySelectorAll('[data-macro-add]');
+    for(var j=0;j<addBtns.length;j++){
+      (function(btn){
+        var idx=parseInt(btn.getAttribute('data-macro-add'),10);
+        btn.addEventListener('click',function(){
+          addMappingRow(idx);
+          rebuildMacroFromSlot(idx);
+        });
+      })(addBtns[j]);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
+    initSliders();
+    initBypass();
+    initMacroSlots();
   });
-}
 
-// ---- DECAY macro (uses the macro engine) --------------------------------- //
-var _decayLoaded = false;
-function setDecayMacro(v) {
-  v = parseFloat(v);
-  // Update both readouts (panel + inline)
-  var o1 = document.getElementById('outdecay');
-  var o2 = document.getElementById('outdecay2');
-  if (o1) o1.textContent = Math.round(v);
-  if (o2) o2.textContent = Math.round(v);
-  // Sync both sliders
-  var s1 = document.getElementById('sdecay');
-  var s2 = document.getElementById('sdecay2');
-  if (s1) s1.value = v;
-  if (s2) s2.value = v;
-
-  if (!_decayLoaded && StyleEngine.macro && StyleEngine.macro.starterPresets) {
-    // Load the DECAY starter preset (creates the macro definition).
-    StyleEngine.macro.load(StyleEngine.macro.starterPresets.DECAY);
-    _decayLoaded = true;
-  }
-  if (StyleEngine.macro) {
-    StyleEngine.macro.setValue('decay-master', v);
-  }
-  // Reflect driven dials back to their panel sliders.
-  reflectAllSliders();
-}
-
-// After a macro drives dials, update every slider and readout in the panel to match.
-function reflectAllSliders() {
-  var cs = getComputedStyle(document.documentElement);
-  var allInputs = document.querySelectorAll('.panel input[type=range][oninput*="setDial"]');
-  for (var i = 0; i < allInputs.length; i++) {
-    var input = allInputs[i];
-    var match = input.getAttribute('oninput').match(/setDial\('([^']+)'/);
-    if (!match) continue;
-    var cssVar = match[1];
-    var rawVal = cs.getPropertyValue(cssVar);
-    var numVal = parseFloat(rawVal);
-    if (isNaN(numVal)) continue;
-    numVal = Math.round(numVal);
-    input.value = numVal;
-    var out = document.getElementById('out' + cssVar);
-    if (out) out.textContent = numVal;
-  }
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  renderRough();
-  runNotations();
-});
+})();
 </script>
 </body>
 </html>
