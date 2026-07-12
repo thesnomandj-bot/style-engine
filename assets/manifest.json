@@ -14,7 +14,21 @@
       "description": "curved arrow pointing right",
       "date": "2026-07-10",
       "source": "test_arrow.jpg"
+    },
+    {
+      "filename": "spawn-childhood-drawing.png",
+      "type": "png",
+      "description": "spawn childhood drawing",
+      "date": "2026-07-11",
+      "source": "spawn.png"
+    },
+    {
+      "filename": "spawn-childhood-drawing.svg",
+      "type": "svg",
+      "description": "spawn childhood drawing",
+      "date": "2026-07-11",
+      "source": "spawn.png"
     }
   ],
-  "updated": "2026-07-10"
+  "updated": "2026-07-11"
 }
