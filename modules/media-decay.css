@@ -1,0 +1,212 @@
+/* =============================================================================
+   media-decay.css — Analog Wear module for the Style Engine
+   -----------------------------------------------------------------------------
+   ANALOG degradation only: film grain, dust/scratches, tape warble, soft chroma
+   ghosting, sun-faded tint, edge vignette, projector flutter.
+   This module knows nothing about the glitch module. No scanlines here.
+   Every magnitude is derived from a --md-* dial (0-100). At 0, each effect is
+   completely invisible.
+   ============================================================================= */
+
+:root {
+  /* -- Dials (0-100). These are the public knobs. -------------------------- */
+  --md-grain: 0;      /* film grain noise overlay opacity        */
+  --md-dust: 0;       /* specks + occasional hairline scratches   */
+  --md-warble: 0;     /* slow tape-like wave distortion           */
+  --md-ghosting: 0;   /* soft analog chroma bleed (NOT rgb-split) */
+  --md-tint: 0;       /* drift toward warm sun-faded / sepia      */
+  --md-vignette: 0;   /* edge darkening / wear                    */
+  --md-flutter: 0;    /* projector-like brightness instability    */
+
+  /* -- Derived values (--_md-*). Never set these by hand. ------------------ */
+  /* Grain overlay tops out around 0.55 opacity so it never fully hides text. */
+  --_md-grain-opacity: calc(var(--md-grain) / 100 * 0.55);
+
+  /* Dust overlay opacity + scratch visibility. */
+  --_md-dust-opacity: calc(var(--md-dust) / 100 * 0.9);
+
+  /* Warble amplitude in px. JS steps --_md-warble-x between +/- this range. */
+  --_md-warble-amp: calc(var(--md-warble) / 100 * 5px);
+  --_md-warble-x: 0px;            /* written discretely by JS */
+
+  /* Ghosting: soft, blurred, low-opacity chroma bleed. */
+  --_md-ghost-offset: calc(var(--md-ghosting) / 100 * 7px);
+  --_md-ghost-blur: calc(var(--md-ghosting) / 100 * 4px);
+  --_md-ghost-opacity: calc(var(--md-ghosting) / 100 * 0.45);
+
+  /* Tint: sepia amount + warm overlay opacity. */
+  --_md-tint-amount: calc(var(--md-tint) / 100);
+  --_md-tint-overlay: calc(var(--md-tint) / 100 * 0.35);
+
+  /* Vignette: darkness of the outer ring. */
+  --_md-vignette-strength: calc(var(--md-vignette) / 100 * 0.75);
+
+  /* Flutter: brightness multiplier, written discretely by JS (default 1). */
+  --_md-flutter-b: 1;
+}
+
+/* =============================================================================
+   COMBINED TARGET — applies every media-decay effect at once.
+   ============================================================================= */
+.md-target {
+  position: relative;
+  isolation: isolate;
+  /* tint (sepia) + flutter (brightness) + soft ghost bleed all live in filter.
+     The two blurred, colored drop-shadows ARE the analog chroma bleed —
+     deliberately soft/blurred, the opposite of a hard pixel rgb-split. */
+  filter:
+    sepia(var(--_md-tint-amount))
+    brightness(var(--_md-flutter-b, 1))
+    drop-shadow(var(--_md-ghost-offset) 0 var(--_md-ghost-blur)
+      rgba(255, 60, 90, var(--_md-ghost-opacity)))
+    drop-shadow(calc(-1 * var(--_md-ghost-offset)) 0 var(--_md-ghost-blur)
+      rgba(60, 170, 255, var(--_md-ghost-opacity)));
+  /* warble = horizontal wave offset, stepped discretely by JS */
+  transform: translateX(var(--_md-warble-x, 0px));
+}
+
+/* Warm tint wash + edge vignette share one overlay layer (::before). */
+.md-target::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center,
+      rgba(0, 0, 0, 0) 52%,
+      rgba(0, 0, 0, var(--_md-vignette-strength)) 100%),
+    linear-gradient(0deg,
+      rgba(255, 196, 120, var(--_md-tint-overlay)),
+      rgba(255, 196, 120, var(--_md-tint-overlay)));
+  mix-blend-mode: multiply;
+}
+
+/* Film grain lives on its own overlay layer (::after) via the SVG filter. */
+.md-target::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: var(--_md-grain-opacity);
+  filter: url(#md-grain);
+  mix-blend-mode: overlay;
+}
+
+/* =============================================================================
+   INDIVIDUAL EFFECT CLASSES — use one at a time for isolated wear.
+   Each is self-contained so it works without .md-target.
+   ============================================================================= */
+
+/* Grain only */
+.md-grain { position: relative; isolation: isolate; }
+.md-grain::after {
+  content: "";
+  position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  opacity: var(--_md-grain-opacity);
+  filter: url(#md-grain);
+  mix-blend-mode: overlay;
+}
+
+/* Dust only — JS injects .md-dust-layer specks; this styles the layer. */
+.md-dust { position: relative; isolation: isolate; }
+
+/* Warble only */
+.md-warble { transform: translateX(var(--_md-warble-x, 0px)); }
+
+/* Ghosting only — soft blurred colored bleed, no hard offset. */
+.md-ghosting {
+  filter:
+    drop-shadow(var(--_md-ghost-offset) 0 var(--_md-ghost-blur)
+      rgba(255, 60, 90, var(--_md-ghost-opacity)))
+    drop-shadow(calc(-1 * var(--_md-ghost-offset)) 0 var(--_md-ghost-blur)
+      rgba(60, 170, 255, var(--_md-ghost-opacity)));
+}
+
+/* Tint only — sun-faded warm drift. */
+.md-tint {
+  position: relative; isolation: isolate;
+  filter: sepia(var(--_md-tint-amount));
+}
+.md-tint::before {
+  content: "";
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: rgba(255, 196, 120, var(--_md-tint-overlay));
+  mix-blend-mode: multiply;
+}
+
+/* Vignette only — pure CSS radial darkening. Uses ::after to avoid collision
+   with .md-tint::before when both classes are on the same element. */
+.md-vignette { position: relative; isolation: isolate; }
+.md-vignette::after {
+  content: "";
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(ellipse at center,
+    rgba(0, 0, 0, 0) 52%,
+    rgba(0, 0, 0, var(--_md-vignette-strength)) 100%);
+}
+
+/* Flutter only — brightness driven by JS-stepped variable. */
+.md-flutter { filter: brightness(var(--_md-flutter-b, 1)); }
+
+/* =============================================================================
+   JS-CREATED LAYERS — styled here, populated by media-decay.js.
+   ============================================================================= */
+
+/* Container for seeded dust specks + hairline scratches. */
+.md-dust-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: var(--_md-dust-opacity);
+}
+.md-dust-layer .md-speck {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+}
+.md-dust-layer .md-speck.md-speck-dark {
+  background: rgba(20, 16, 12, 0.7);
+}
+.md-dust-layer .md-scratch {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.5) 40%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0) 100%);
+}
+
+/* Duplicate content overlay for soft analog ghosting (JS clone). */
+.md-ghost-layer {
+  position: absolute;
+  inset: 0;
+  z-index: -1;                /* sits BEHIND real content, softly bleeding out */
+  pointer-events: none;
+  opacity: var(--_md-ghost-opacity);
+  transform: translateX(var(--_md-ghost-offset));
+  filter: blur(var(--_md-ghost-blur)) hue-rotate(8deg) saturate(1.4);
+  mix-blend-mode: screen;
+}
+
+/* =============================================================================
+   ACCESSIBILITY — collapse motion to a static state.
+   Warble and flutter FREEZE (JS also clears its steppers). Static wear
+   (grain, dust, tint, vignette, ghosting) is preserved.
+   ============================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --_md-warble-x: 0px;      /* freeze warble at neutral */
+    --_md-flutter-b: 1;       /* freeze flutter at stable brightness */
+  }
+  .md-target,
+  .md-warble { transform: none; }
+  .md-target,
+  .md-flutter { /* brightness pinned via --_md-flutter-b above */ }
+}

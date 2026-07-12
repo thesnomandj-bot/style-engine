@@ -1,0 +1,73 @@
+<!-- =============================================================================
+     media-decay.svg.html — SVG filter defs for the Analog Wear module.
+     Inject this once into the document (hidden). media-decay.js writes the
+     turbulence + threshold params at runtime. All filter IDs are prefixed md-.
+     These are analog-wear noise sources ONLY (film grain, dust). No digital
+     glitch primitives live here.
+     ============================================================================= -->
+<svg class="md-svg-defs" width="0" height="0" aria-hidden="true"
+     focusable="false"
+     style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;">
+  <defs>
+
+    <!-- #md-grain — fine film grain via fractalNoise.
+         Distinct from the hand-drawn module's grain: higher base frequency and
+         its own seed so the two never visually rhyme. JS overrides baseFrequency,
+         numOctaves and (optionally) seed. -->
+    <filter id="md-grain" x="0%" y="0%" width="100%" height="100%"
+            color-interpolation-filters="sRGB">
+      <feTurbulence id="md-grain-turb"
+                    type="fractalNoise"
+                    baseFrequency="0.8"
+                    numOctaves="2"
+                    seed="7"
+                    stitchTiles="stitch"
+                    result="noise" />
+      <!-- Flatten to monochrome grain and lift contrast a touch. -->
+      <feColorMatrix in="noise" type="matrix"
+        values="0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0 0
+                0.33 0.33 0.33 0 0"
+        result="grainAlpha" />
+      <feComponentTransfer in="grainAlpha" result="grain">
+        <feFuncA type="linear" slope="1.3" intercept="-0.1" />
+      </feComponentTransfer>
+      <feColorMatrix in="grain" type="matrix"
+        values="0 0 0 0 1
+                0 0 0 0 1
+                0 0 0 0 1
+                0 0 0 1 0" />
+    </filter>
+
+    <!-- #md-dust — sparse specks/lines via low-frequency turbulence pushed
+         through a high alpha threshold. JS raises the threshold (intercept) as
+         the dust dial climbs, so more specks survive. Sparse = high threshold. -->
+    <filter id="md-dust" x="0%" y="0%" width="100%" height="100%"
+            color-interpolation-filters="sRGB">
+      <feTurbulence id="md-dust-turb"
+                    type="turbulence"
+                    baseFrequency="0.018 0.02"
+                    numOctaves="2"
+                    seed="41"
+                    stitchTiles="stitch"
+                    result="dnoise" />
+      <feColorMatrix in="dnoise" type="matrix"
+        values="0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0 0
+                0.4 0.4 0.4 0 0"
+        result="dgray" />
+      <!-- The threshold: only the brightest noise peaks become visible specks. -->
+      <feComponentTransfer in="dgray" result="dthresh">
+        <feFuncA id="md-dust-alpha" type="linear" slope="3" intercept="-0.85" />
+      </feComponentTransfer>
+      <feColorMatrix in="dthresh" type="matrix"
+        values="0 0 0 0 1
+                0 0 0 0 1
+                0 0 0 0 1
+                0 0 0 1 0" />
+    </filter>
+
+  </defs>
+</svg>
