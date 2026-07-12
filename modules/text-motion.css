@@ -1,0 +1,107 @@
+/* ============================================================================
+   Style Engine — TEXT-MOTION MODULE (Reveal Library)
+   Composable text reveal animations. All strengths are dials scaled 0–100.
+   Namespace: --tm-* (dials)  /  --_tm-* (derived values)
+   ========================================================================== */
+
+:root {
+  /* ---- DIALS (0–100) ---------------------------------------------------- */
+  --tm-speed: 50;          /* 0 = very slow (3s)      · 100 = very fast (0.2s) */
+  --tm-stagger: 45;        /* 0 = simultaneous        · 100 = 200ms between    */
+  --tm-randomness: 0;      /* 0 = sequential L→R      · 100 = fully random     */
+  --tm-scramble-pool: 30;  /* 0 = letters/digits only · 100 = full symbol chaos*/
+  --tm-overshoot: 40;      /* 0 = linear, no bounce   · 100 = strong spring    */
+
+  /* ---- DERIVED VALUES (calc from dials) --------------------------------- */
+  /* Rise/drop travel distance and overshoot magnitude */
+  --_tm-rise-dist: 0.9em;
+  --_tm-overshoot-dist: calc(var(--tm-overshoot) * 0.004em); /* 100 -> 0.4em */
+
+  /* Blur amount for blur-in */
+  --_tm-blur-amt: 12px;
+
+  /* Cursor blink speed for typewriter (faster when speed dial is high) */
+  --_tm-cursor-blink: calc((1200 - (var(--tm-speed) * 6)) * 1ms);
+}
+
+/* ---- Container that receives text-motion --------------------------------- */
+.tm-target {
+  /* keep layout stable while spans animate */
+}
+
+/* Inner wrapper holds the split spans; hidden from the accessibility tree
+   because the .tm-target carries an aria-label of the full original text. */
+.tm-inner {
+  display: inline;
+}
+
+/* ---- Per-word / per-character spans -------------------------------------- */
+.tm-word {
+  display: inline-block;
+  white-space: nowrap;      /* keep a word intact while its chars animate */
+}
+
+.tm-char {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+  transform-origin: 50% 100%;
+  /* No CSS transitions here — scramble/typewriter mutate content discretely. */
+}
+
+/* Blinking cursor used by the typewriter reveal */
+.tm-cursor {
+  display: inline-block;
+  width: 0.08em;
+  margin-left: 0.02em;
+  background: currentColor;
+  animation: tm-blink var(--_tm-cursor-blink) step-end infinite;
+  /* height set inline by JS to match line-height */
+}
+
+/* ============================================================================
+   KEYFRAMES
+   ========================================================================== */
+
+/* staggered-rise: rise from below + fade in, with optional overshoot */
+@keyframes tm-rise {
+  0%   { opacity: 0; transform: translateY(var(--_tm-rise-dist)); }
+  70%  { opacity: 1; transform: translateY(calc(var(--_tm-overshoot-dist) * -1)); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* cascade-drop: fall in from above with a slight overshoot bounce */
+@keyframes tm-drop {
+  0%   { opacity: 0; transform: translateY(calc(var(--_tm-rise-dist) * -1)); }
+  70%  { opacity: 1; transform: translateY(var(--_tm-overshoot-dist)); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* blur-in: blurred + transparent -> clear + opaque */
+@keyframes tm-blur-in {
+  0%   { opacity: 0; filter: blur(var(--_tm-blur-amt)); }
+  100% { opacity: 1; filter: blur(0); }
+}
+
+/* wipe: clip-path reveal in three directions */
+@keyframes tm-wipe-lr { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes tm-wipe-rl { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
+@keyframes tm-wipe-tb { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+
+/* cursor blink */
+@keyframes tm-blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+
+/* ============================================================================
+   REDUCED MOTION — instant final text, no animation
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .tm-char,
+  .tm-word,
+  .tm-inner {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+    animation: none !important;
+  }
+  .tm-cursor { display: none !important; animation: none !important; }
+}
