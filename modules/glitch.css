@@ -1,0 +1,171 @@
+/* ==========================================================================
+   Style Engine — GLITCH module (digital breakage)
+   Namespace: --gl-* (dials), --_gl-* (private/derived)
+   Every magnitude scales from a dial. Dial at 0 = effect off. Dial at 100 =
+   maximum sane intensity (documented in skills/glitch/SKILL.md).
+   Animation is stepped/discrete only — driven by modules/glitch.js.
+   ========================================================================== */
+
+:root {
+  /* ---- DIALS (0–100) — the only public knobs ---------------------------- */
+  --gl-rgb-split: 0;    /* chromatic channel offset (red/cyan ghost)         */
+  --gl-jitter: 0;       /* random positional shake per step                  */
+  --gl-dropout: 0;      /* elements/letters randomly blink out per step      */
+  --gl-block-shift: 0;  /* horizontal slice displacement (corrupted rows)    */
+  --gl-scanlines: 0;    /* line-overlay density/opacity                      */
+  --gl-static: 0;       /* noise-overlay opacity                             */
+  --gl-rate: 0;         /* steps per second for all glitch stepping          */
+
+  /* ---- DERIVED (private) — max-sane magnitudes scaled by their dial ------ */
+  --_gl-rgb-offset:      calc(var(--gl-rgb-split)  / 100 * 8px);   /* max ~8px  */
+  --_gl-rgb-alpha:       calc(var(--gl-rgb-split)  / 100 * 0.6);   /* fade in   */
+  --_gl-jitter-amp:      calc(var(--gl-jitter)     / 100 * 6px);   /* max ~6px  */
+  --_gl-dropout-frac:    calc(var(--gl-dropout)    / 100 * 0.4);   /* max 40%   */
+  --_gl-block-amp:       calc(var(--gl-block-shift)/ 100 * 20px);  /* max ~20px */
+  --_gl-scanline-opacity:calc(var(--gl-scanlines)  / 100 * 0.5);   /* max 0.5   */
+  --_gl-scanline-gap:    calc(2px + (100 - var(--gl-scanlines)) / 100 * 4px);
+  --_gl-static-opacity:  calc(var(--gl-static)     / 100 * 0.35);  /* max 0.35  */
+  --_gl-rate:            calc(var(--gl-rate)        / 100 * 15);    /* max 15/s  */
+
+  /* ---- LIVE per-step values — written by glitch.js each tick; neutral here */
+  --_gl-jx: 0px;   /* jitter x            */
+  --_gl-jy: 0px;   /* jitter y            */
+  --_gl-bx: 0px;   /* block/slice x shift */
+  --_gl-bt: 50%;   /* block band top inset    */
+  --_gl-bb: 50%;   /* block band bottom inset */
+  --_gl-vis: 1;    /* dropout visibility (1 shown / 0 dropped) */
+}
+
+/* ==========================================================================
+   COMPOSITE — .gl-target applies every glitch effect at once
+   ========================================================================== */
+.gl-target {
+  position: relative;
+  /* stepped only: NO transition / NO easing on transform or opacity */
+  transition: none !important;
+  transform: translate(
+    calc(var(--_gl-jx) + var(--_gl-bx)),
+    var(--_gl-jy)
+  );
+  opacity: var(--_gl-vis);
+  text-shadow:
+    calc(-1 * var(--_gl-rgb-offset)) 0 0 rgba(255,   0,   0, var(--_gl-rgb-alpha)),
+    var(--_gl-rgb-offset)            0 0 rgba(  0, 200, 255, var(--_gl-rgb-alpha));
+  will-change: transform, opacity;
+}
+
+/* Static-noise overlay (::before) — opacity fades from the --gl-static dial */
+.gl-target::before,
+.gl-static::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: #808080;
+  filter: url(#gl-static);
+  mix-blend-mode: screen;
+  opacity: var(--_gl-static-opacity);
+}
+
+/* Scanline overlay (::after) — density via gap, strength via opacity dial */
+.gl-target::after,
+.gl-scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, var(--_gl-scanline-opacity)) 0,
+    rgba(0, 0, 0, var(--_gl-scanline-opacity)) 1px,
+    transparent 1px,
+    transparent var(--_gl-scanline-gap)
+  );
+}
+
+/* ==========================================================================
+   INDIVIDUAL EFFECT CLASSES — compose any subset on their own
+   ========================================================================== */
+
+/* Chromatic aberration — pure CSS, driven by the offset + alpha derivations */
+.gl-rgb-split {
+  text-shadow:
+    calc(-1 * var(--_gl-rgb-offset)) 0 0 rgba(255,   0,   0, var(--_gl-rgb-alpha)),
+    var(--_gl-rgb-offset)            0 0 rgba(  0, 200, 255, var(--_gl-rgb-alpha));
+}
+
+/* Positional jitter — x/y written by glitch.js each step */
+.gl-jitter {
+  transition: none !important;
+  transform: translate(var(--_gl-jx), var(--_gl-jy));
+  will-change: transform;
+}
+
+/* Signal dropout — visibility toggled by glitch.js each step */
+.gl-dropout {
+  transition: none !important;
+  opacity: var(--_gl-vis);
+}
+
+/* Block shift (whole-element horizontal slip) — magnitude from --gl-block-shift */
+.gl-block-shift {
+  transition: none !important;
+  transform: translateX(var(--_gl-bx));
+  will-change: transform;
+}
+
+/* Scanlines standalone */
+.gl-scanlines {
+  position: relative;
+}
+
+/* Static standalone */
+.gl-static {
+  position: relative;
+}
+
+/* ==========================================================================
+   TRUE ROW-DISPLACEMENT variant — a duplicated, clipped, shifted text band.
+   Requires data-gl-text="…" mirroring the element's text (see SKILL.md).
+   The horizontal shift magnitude (--_gl-bx) still derives from --gl-block-shift.
+   ========================================================================== */
+.gl-block {
+  position: relative;
+}
+.gl-block::before {
+  content: attr(data-gl-text);
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  color: inherit;
+  background: inherit;
+  transform: translateX(var(--_gl-bx));
+  /* JS moves this band up/down the element; only the band is revealed */
+  clip-path: inset(var(--_gl-bt) 0 var(--_gl-bb) 0);
+}
+
+/* ==========================================================================
+   ACCESSIBILITY — collapse all motion to a static final state.
+   Overlays (static/scanlines) stay visible; movement/blink stops.
+   glitch.js also clears its interval when reduced-motion is active.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .gl-target,
+  .gl-jitter,
+  .gl-block-shift {
+    transform: none !important;
+  }
+  .gl-target,
+  .gl-dropout {
+    opacity: 1 !important;
+  }
+  .gl-block::before {
+    transform: none !important;
+    clip-path: none !important;
+    content: none !important;
+  }
+  /* --gl-scanlines and --gl-static overlays remain as the frozen texture */
+}

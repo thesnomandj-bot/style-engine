@@ -1,0 +1,41 @@
+<!-- ==========================================================================
+     Style Engine — GLITCH module SVG defs
+     Inline this once per page (e.g. just after <body>). It renders nothing on
+     its own; CSS references the filters by id and glitch.js writes the
+     data-gl-* attributes it needs (baseFrequency).
+     ========================================================================== -->
+<svg class="gl-svg-defs" width="0" height="0" aria-hidden="true"
+     focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+
+    <!-- STATIC / NOISE overlay ---------------------------------------------
+         feTurbulence generates fractal noise; the binder sets baseFrequency
+         from the --gl-static dial (0 → 0 = no grain). data-gl-base-freq-max
+         holds the MAX frequency so no magnitude is hard-coded in JS. -->
+    <filter id="gl-static" x="0" y="0" width="100%" height="100%"
+            filterUnits="objectBoundingBox" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise"
+                    baseFrequency="0"
+                    numOctaves="2"
+                    stitchTiles="stitch"
+                    result="noise"
+                    data-gl-static-noise
+                    data-gl-base-freq-max="0.9" />
+      <!-- collapse to grayscale, opaque noise texture -->
+      <feColorMatrix in="noise" type="matrix"
+        values="0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0 0
+                1 1 1 0 0"
+        result="alpha" />
+      <feColorMatrix in="alpha" type="matrix"
+        values="0 0 0 0 1
+                0 0 0 0 1
+                0 0 0 0 1
+                0 0 0 1 0"
+        result="grain" />
+      <feComposite in="grain" in2="SourceGraphic" operator="in" />
+    </filter>
+
+  </defs>
+</svg>
