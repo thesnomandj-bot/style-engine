@@ -20,22 +20,23 @@ Each module ships up to three parts. Include only the modules you need.
 
 | Module        | CSS                       | JS                       | SVG defs (filters)          |
 |---------------|---------------------------|--------------------------|-----------------------------|
-| Hand-drawn    | `modules/hand-drawn.css`  | `modules/hand-drawn.js`  | `modules/hand-drawn.svg`    |
-| Glitch        | `modules/glitch.css`      | `modules/glitch.js`      | `modules/glitch.svg`        |
-| Text-motion   | `modules/text-motion.css` | `modules/text-motion.js` | *(none)*                    |
-| Media-decay   | `modules/media-decay.css` | `modules/media-decay.js` | `modules/media-decay.svg`   |
-| **Core**      | —                         | `modules/style-engine.js`| —                           |
-| **Macro**     | —                         | `modules/macro.js`       | —                           |
+| Hand-drawn    | `modules/hand-drawn.css`  | `modules/hand-drawn.js`  | `modules/hand-drawn.svg.html` |
+| Glitch        | `modules/glitch.css`      | `modules/glitch.js`      | `modules/glitch.svg.html`     |
+| Text-motion   | `modules/text-motion.css` | `modules/text-motion.js` | *(none)*                      |
+| Media-decay   | `modules/media-decay.css` | `modules/media-decay.js` | `modules/media-decay.svg.html`|
+| **Macro**     | —                         | `modules/macro.js`       | —                             |
 
-`style-engine.js` provides the `StyleEngine` global (`setDial`, `register`,
-`sync`). `macro.js` attaches `StyleEngine.macro` and must load **last**.
+`hand-drawn.js` creates the `StyleEngine` global (`setDial`, `register`,
+`sync`) and must load **first**. Other modules register with the existing
+global. `macro.js` attaches `StyleEngine.macro` and must load **last**.
 
 ---
 
 ## Load order
 
-Order matters. CSS and SVG defs must exist before the module JS runs, and
-`macro.js` must run after both core and modules so it can find the global.
+Order matters. CSS and SVG defs must exist before the module JS runs.
+`hand-drawn.js` creates the `StyleEngine` global and must load first.
+`macro.js` must run after all modules so it can find the global.
 
 ```html
 <head>
@@ -46,17 +47,15 @@ Order matters. CSS and SVG defs must exist before the module JS runs, and
   <link rel="stylesheet" href="modules/media-decay.css">
 </head>
 <body>
-  <!-- 2. SVG filter defs in the body (inline, hidden) -->
-  <!-- paste the contents of each module's .svg here, e.g. -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <!-- hand-drawn / glitch / media-decay <filter> defs -->
-  </svg>
+  <!-- 2. SVG filter defs in the body (inline, not external) -->
+  <!-- paste contents of each module's .svg.html here -->
+  <!-- hand-drawn.svg.html, glitch.svg.html, media-decay.svg.html -->
 
   <!-- ... your app markup ... -->
 
-  <!-- 3. Core engine, then modules -->
-  <script src="modules/style-engine.js"></script>
+  <!-- 3. hand-drawn.js FIRST (creates StyleEngine registry) -->
   <script src="modules/hand-drawn.js"></script>
+  <!-- then other modules in any order -->
   <script src="modules/glitch.js"></script>
   <script src="modules/text-motion.js"></script>
   <script src="modules/media-decay.js"></script>
